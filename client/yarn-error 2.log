@@ -1,0 +1,44 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.22.5/libexec/bin/yarn.js add concurrently nodemon -D
+
+PATH: 
+  /usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/usr/local/sbin
+
+Yarn version: 
+  1.22.5
+
+Node version: 
+  12.16.2
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/tranquang/Downloads/1-Web_Developemnt/airbnb-clone-v2/package.json: Unexpected token } in JSON at position 374
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.22.5/libexec/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.22.5/libexec/lib/cli.js:310:30)
+      at /usr/local/Cellar/yarn/1.22.5/libexec/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "airbnb-clone-v2",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "https://github.com/jaytranuts247/airbnb-clone-v2.git",
+    "author": "“Jay <tranquang2407@gmail.com>",
+    "license": "MIT",
+    "scripts": {
+      "start": "node server.js",
+      "server": "nodemon server.js",
+      "client": "yarn -cwd client start",
+      "eject": "react-scripts eject"
+    },
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

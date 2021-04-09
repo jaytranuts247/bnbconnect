@@ -1,0 +1,22 @@
+{
+  "name": "airbnb-clone-v2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/jaytranuts247/airbnb-clone-v2.git",
+  "author": "“Jay <tranquang2407@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "cd client && yarn start",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "concurrently": "^6.0.1",
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  }
+}
