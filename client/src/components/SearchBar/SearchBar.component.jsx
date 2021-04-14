@@ -215,7 +215,7 @@ const SearchBar = ({
 				toggleCheckOut={toggleCheckOut}
 				ref={searchRef}
 			>
-				<form action="GET">
+				<form action="/search">
 					<ul>
 						<li
 							className="location-search"

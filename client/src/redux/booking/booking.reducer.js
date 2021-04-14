@@ -51,7 +51,7 @@ const bookingReducer = (state = initialState, action) => {
 		case LOAD_RECOMMENDED_LOCATION_RESULTS:
 			return {
 				...state,
-				recommendedResults: action.payload,
+				recommendedResults: [...action.payload],
 			};
 		case SET_BOOKING_DATES:
 			return {

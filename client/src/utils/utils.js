@@ -54,6 +54,7 @@ export const guestDisplay = (adultsCount, childrenCount, infantsCount) => {
 };
 
 export const validateBookingInfo = (bookingInfo) => {
+	console.log("validateBookingInfo", bookingInfo);
 	if (bookingInfo.selectedLocation === null) return validateTypes.LOCATION;
 	if (bookingInfo.startDate === null) return validateTypes.START_DATE;
 	if (bookingInfo.endDate === null) return validateTypes.END_DATE;

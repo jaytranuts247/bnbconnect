@@ -116,6 +116,7 @@ const LocationSearchField = ({
 				infantsNum: infantsCount,
 				selectedLocation,
 			});
+			console.log("validateResult", validateResult);
 
 			// Link to search results Page
 			if (validateResult === validateTypes.OK) return history.push("/search");
