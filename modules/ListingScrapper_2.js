@@ -130,7 +130,7 @@ class ListingScrapper {
 			const page = await browser.newPage();
 			page.setViewport({ width: 1280, height: 800 });
 			// waitForSelector ??
-			await page.goto(this.url);
+			await page.goto(this.url, { waitUntil: "networkidle2" });
 			const content = await page.content();
 			// await browser.close();
 			return content;
@@ -141,56 +141,29 @@ class ListingScrapper {
 	};
 
 	ScrapeHtml = async () => {
-		let browser;
-		let results = [];
+		// let browser;
 		var listingData = [];
-		var listingDataApollo = [];
 		var loadingAttempt = 0;
 		try {
 			// make the url
 			this.urlMake();
-			/*
-
-			if (isFileExisted("./test1.html")) {
-				console.log("isFileExisted");
-				const filePath = path.join(__dirname, "../test.html");
-				var html = fs.readFileSync(filePath, "utf8");
-				console.log("file type", mime.lookup(html));
-			} else {
-				// fetch html from url
-				// var html = await this.fetchHtml();
-				console.log("start scrapping");
-				browser = await puppeteer.launch({ headless: false });
-				var page = await browser.newPage();
-				page.setViewport({ width: 1280, height: 800 });
-
-				await page.goto(this.url, { waitUntil: "networkidle2" });
-				// await page.goto(this.url);
-				// page.waitForSelector("._8s3ctt a");
-				// page.waitForSelector("#data-state");
-
-				// const html = await page.content();
-				var html = await page.evaluate(() => document.body.innerHTML);
-
-				// save html file to disk
-				fs.writeFileSync("./test.html", html);
-			}
-			*/
 
 			console.log("start Scrapping");
-			browser = await puppeteer.launch({ headless: false });
-			var page = await browser.newPage();
-			page.setViewport({ width: 1280, height: 800 });
-			/*
+			// browser = await puppeteer.launch({ headless: false });
+			// var page = await browser.newPage();
+			// page.setViewport({ width: 1280, height: 800 });
 
 			while (listingData.length === 0 || loadingAttempt < 2) {
-				await page.goto(this.url, { waitUntil: "networkidle2" });
+				// await page.goto(this.url, { waitUntil: "networkidle2" });
 				// await page.goto(this.url);
 				// page.waitForSelector("._8s3ctt a");
 				// page.waitForSelector("#data-state");
 
 				// const html = await page.content();
-				var html = await page.evaluate(() => document.body.innerHTML);
+				// var html = await page.evaluate(() => document.body.innerHTML);
+
+				// get html file
+				var html = await this.fetchHtml();
 
 				// save html file to disk
 				fs.writeFileSync("./test.html", html);
@@ -200,10 +173,10 @@ class ListingScrapper {
 
 				// get response data
 				var dataRes = $("#data-state").html();
-				fs.writeFileSync("./datares.txt", dataRes);
+				// fs.writeFileSync("./datares.txt", dataRes);
 
-				var jsonData = JSON.parse(dataRes);
-				fs.writeFileSync("./jsonData.js", jsonData);
+				var jsonData = await JSON.parse(dataRes);
+				// fs.writeFileSync("./jsonData.js", jsonData);
 				console.log(loadingAttempt + " attempt");
 
 				if (
@@ -244,7 +217,8 @@ class ListingScrapper {
 					break;
 				}
 			}
-			*/
+
+			/*
 			const html = fs.readFileSync("./test.html", "utf8");
 			var $ = cheerio.load(html);
 			const dataText = $("#data-state").html();
@@ -273,7 +247,7 @@ class ListingScrapper {
 				console.log("jsonData not existed");
 				return;
 			}
-
+*/
 			fs.writeFileSync("./listingData.txt", JSON.stringify(listingData));
 
 			// get LatLng
@@ -291,7 +265,7 @@ class ListingScrapper {
 					publicAddress,
 				} = item.listing;
 				const { pricingQuote } = item;
-				console.log("pricingQuote", pricingQuote);
+				// console.log("pricingQuote", pricingQuote);
 				this.scrappedListings.push({
 					coords: {
 						lat,
@@ -342,7 +316,7 @@ class ListingScrapper {
 				let reviewNumber = $$(this.#Selectors.reviewNumber)
 					.text()
 					.trim()
-					.match(/(\d+)/);
+					.match(/(\d+)/g);
 
 				// scrape previewInfo
 				$$(this.#Selectors.previewInfo.current)
@@ -387,151 +361,6 @@ class ListingScrapper {
 		}
 	};
 
-	scrapeListingDetails = async (url, idx, page) => {
-		let serviceFee = {},
-			cleaningFee = {};
-
-		try {
-			// if (idx >= 1) return;
-			await page.goto(url);
-			// await page.waitForNavigation({
-			// 	timeout: 60000,
-			// 	waitUntil: "networkidle2",
-			// });
-
-			// await page.waitForSelector("._1fog6rx a");
-			// await page.waitForSelector("button._ejra3kg", { visible: true });
-
-			// check readmore button isvisible or not
-
-			// let readMoreVisible = await this.isElementVisible(
-			// 	page,
-			// 	this.#Selectors.individualListing.host.hostDivContainer
-			// );
-
-			await page.waitForSelector(this.#Selectors.individualListing.host.image, {
-				visible: true,
-			});
-
-			// .waitForSelector(
-			// 	this.#Selectors.individualListing.host.readMoreButton,
-			// 	{ visible: true }
-			// );
-
-			const html = await page.content();
-
-			const $$ = cheerio.load(html);
-
-			// write file
-			fs.writeFileSync(`./scrappedFiles/listings_${idx}.html`, html);
-			console.log("buttotn sada", $$("div._1byskwn button"));
-
-			// click readmore button
-			if (
-				$$(this.#Selectors.individualListing.host.readMoreButton).length !== 0
-			) {
-				console.log("click readmore");
-				await page
-					.click(this.#Selectors.individualListing.host.readMoreButton)
-					.catch(() => {});
-				let hostIntro = $$(
-					this.#Selectors.individualListing.host.IntroClickMore
-				).text();
-			} else {
-				console.log("clickmore not clicked");
-				let hostIntro = $$(this.#Selectors.individualListing.host.Intro).text();
-			}
-
-			// scrape host name - and url - introduction
-			let hostName = getLastWord(
-				$$(this.#Selectors.individualListing.host.name).text()
-			);
-			let hostImage = $$(this.#Selectors.individualListing.host.image).attr(
-				"src"
-			);
-			let joinDate = $$(this.#Selectors.individualListing.host.joined).text();
-
-			// scrape service/cleaning fee
-			if (
-				this.scrappedListings[idx].serviceFee.priceString !== 0 ||
-				this.scrappedListings[idx].cleaningFee.priceString !== 0
-			) {
-				$$(this.#Selectors.individualListing.services.parent).each((i, ele) => {
-					const newSelector = cheerio.load($$(ele).html());
-					if (
-						newSelector(
-							this.#Selectors.individualListing.services.servicesString
-						)
-							.text()
-							.trim() === "Service fee"
-					) {
-						serviceFee = {
-							description: newSelector(
-								this.#Selectors.individualListing.services.servicesString
-							)
-								.text()
-								.trim(),
-							priceString: newSelector(
-								this.#Selectors.individualListing.services.serviceFee
-							).text(),
-						};
-					}
-					if (
-						newSelector(
-							this.#Selectors.individualListing.services.servicesString
-						)
-							.text()
-							.trim() === "Cleaning fee"
-					) {
-						cleaningFee = {
-							description: newSelector(
-								this.#Selectors.individualListing.services.servicesString
-							)
-								.text()
-								.trim(),
-							priceString: newSelector(
-								this.#Selectors.individualListing.services.cleaningFee
-							).text(),
-						};
-					}
-				});
-			}
-
-			// scrape listing images
-			$$(this.#Selectors.images).each((i, e) => {
-				console.log($$(e).attr("src"));
-				this.scrappedListings[idx].images.push($$(e).attr("src"));
-				console.log(this.scrappedListings[idx].images);
-			});
-
-			// scrape listing reviews: scrape to 3-5 reviews
-			if (this.scrappedListings[idx].ratings !== "") {
-				$$(this.#Selectors.individualListing.ratings.ratingTotal).text();
-			}
-
-			this.scrappedListings[idx] = {
-				...this.scrappedListings[idx],
-				host: {
-					hostName,
-					hostImage,
-					joinDate,
-				},
-			};
-		} catch (err) {
-			console.error(err);
-		}
-	};
-
-	isElementVisible = async (page, cssSelector) => {
-		let visible = true;
-		await page
-			.waitForSelector(cssSelector, { visible: true, timeout: 2000 })
-			.catch(() => {
-				visible = false;
-			});
-		return visible;
-	};
-
 	getPriceQuote = (priceList, priceTag) => {
 		try {
 			if (priceList.length === 0 || !priceList)
@@ -556,7 +385,7 @@ class ListingScrapper {
 		}));
 	};
 }
-// content="www.airbnb.com/rooms/49020824?adults=3&check_in=2021-09-06&check_out=2021-09-16&previous_page_section_name=1000"
+
 module.exports = ListingScrapper;
 
 /*
