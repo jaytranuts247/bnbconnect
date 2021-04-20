@@ -278,15 +278,49 @@ class ListingScrapper {
 
 			// get LatLng
 			listingData.map((item, idx) => {
+				const {
+					city,
+					avgRating,
+					contextualPictures,
+					kickerContent,
+					lat,
+					lng,
+					previewAmenityNames,
+					roomAndPropertyType,
+					user,
+					publicAddress,
+				} = item.listing;
+				const { pricingQuote } = item;
+				console.log("pricingQuote", pricingQuote);
 				this.scrappedListings.push({
 					coords: {
-						lat: item.listing.lat,
-						lng: item.listing.lng,
+						lat,
+						lng,
 					},
+					city,
+					avgRating,
+					kickerContent: kickerContent.messages[0],
+					previewAmenityNames,
+					roomAndPropertyType,
+					publicAddress,
+					user: {
+						id: user.id,
+						pictureUrl: user.pictureUrl,
+						thumbnailUrl: user.thumbnailUrl,
+					},
+					images: this.getImages(contextualPictures),
+					serviceFee: this.getPriceQuote(
+						pricingQuote.structuredStayDisplayPrice.explanationData
+							.priceDetails[0].items,
+						"Service fee"
+					),
+					cleaningFee: this.getPriceQuote(
+						pricingQuote.structuredStayDisplayPrice.explanationData
+							.priceDetails[0].items,
+						"Cleaning fee"
+					),
 				});
 			});
-
-			// get service fee, cleaning fee
 
 			console.log("loaded cheerio");
 			// Start scrapping
@@ -344,40 +378,8 @@ class ListingScrapper {
 					previewInfo,
 					amenities,
 					listingLink,
-					images: [],
 				};
 			});
-
-			// get listing details
-			const detailsPage = await browser.newPage();
-
-			for (let idx = 0; idx < this.scrappedListings.length; idx++) {
-				let serviceFee = this.getPriceQuote(jsonData, idx, "Service fee")[0];
-				let cleaningFee = this.getPriceQuote(jsonData, idx, "Cleaning fee")[0];
-
-				// push service/cleaning fee to scrappedListings
-				this.scrappedListings[idx] = {
-					...this.scrappedListings[idx],
-					serviceFee: {
-						description:
-							(serviceFee && serviceFee.description) || "Service fee",
-						priceString: (serviceFee && serviceFee.priceString) || 0,
-					},
-					cleaningFee: {
-						description:
-							(cleaningFee && cleaningFee.description) || "Cleaning fee",
-						priceString: (cleaningFee && cleaningFee.priceString) || 0,
-					},
-				};
-				if (!serviceFee) console.log("Service fee not existed");
-				if (!cleaningFee) console.log("Cleaning fee not existed");
-
-				await this.scrapeListingDetails(
-					this.scrappedListings[idx].listingLink,
-					idx,
-					detailsPage
-				);
-			}
 
 			return this.scrappedListings;
 		} catch (err) {
@@ -530,39 +532,109 @@ class ListingScrapper {
 		return visible;
 	};
 
-	getPriceQuote = (json, idx, priceTag) => {
-		let priceQuotes;
-		if (
-			json &&
-			json.niobeMinimalClientData[1] &&
-			json.niobeMinimalClientData[1][1]
-		) {
-			priceQuotes =
-				json.niobeMinimalClientData[1][1].data.dora.exploreV3.sections[0].items[
-					idx
-				].pricingQuote.structuredStayDisplayPrice.explanationData
-					.priceDetails[0].items;
-		} else if (
-			json &&
-			json.niobeApolloClientData &&
-			json.niobeApolloClientData.__niobe_denormalized &&
-			json.niobeApolloClientData.__niobe_denormalized.queries[0] &&
-			json.niobeApolloClientData.__niobe_denormalized.queries[0][1]
-		) {
-			priceQuotes =
-				json.niobeApolloClientData.__niobe_denormalized.queries[0][1].dora
-					.exploreV3.sections[0].items[idx].pricingQuote
-					.structuredStayDisplayPrice.explanationData.priceDetails[0].items;
-		} else {
-			return null;
+	getPriceQuote = (priceList, priceTag) => {
+		try {
+			if (priceList.length === 0 || !priceList)
+				console.log("priceQoute not existed");
+			let priceQuotes = priceList.filter(
+				(item) => item.description === priceTag
+			)[0];
+			// console.log("priceQuotes", priceQuotes);
+			return {
+				description: (priceQuotes && priceQuotes.description) || priceTag,
+				priceString: (priceQuotes && priceQuotes.priceString) || 0,
+			};
+		} catch (err) {
+			console.log(err);
 		}
-		console.log("priceQuotes", priceQuotes);
+	};
 
-		return priceQuotes.filter((item) => item.description === priceTag);
+	getImages = (picturesList) => {
+		return picturesList.map((item) => ({
+			id: item.id,
+			picture: item.picture,
+		}));
 	};
 }
 // content="www.airbnb.com/rooms/49020824?adults=3&check_in=2021-09-06&check_out=2021-09-16&previous_page_section_name=1000"
 module.exports = ListingScrapper;
+
+/*
+ {
+        "title": "Vegas Life at its Best",
+        "type": "Entire condominium in Las Vegas",
+        "location": " Las Vegas",
+        "pricePerNight": "$109",
+        "ratings": "5.0",
+        "reviewNumber": [
+            "23",
+            "23"
+        ],
+        "coords": {
+            "lat": 36.11306,
+            "lng": -115.18781
+        },
+        "city": "Las Vegas",
+        "avgRating": 5,
+        "kickerContent": "Entire condominium in Las Vegas",
+        "previewAmenityNames": [
+            "Pool",
+            "Wifi",
+            "Free parking",
+            "Air conditioning"
+        ],
+        "roomAndPropertyType": "Entire condominium",
+        "publicAddress": "Las Vegas, NV, United States",
+        "user": {
+            "id": "360547879",
+            "pictureUrl": "https://a0.muscache.com/im/pictures/user/3bd36f0b-d20b-4e3e-9121-d252ed8fb7ce.jpg?aki_policy=profile_x_medium",
+            "thumbnailUrl": "https://a0.muscache.com/im/pictures/user/3bd36f0b-d20b-4e3e-9121-d252ed8fb7ce.jpg?aki_policy=profile_small"
+        },
+        "images": [
+            {
+                "id": "1062038137",
+                "picture": "https://a0.muscache.com/im/pictures/miso/Hosting-44555924/original/5a420749-0028-4993-b297-b506f7a8c54f.jpeg?im_w=720"
+            },
+            {
+                "id": "1062040392",
+                "picture": "https://a0.muscache.com/im/pictures/miso/Hosting-44555924/original/5a8bc69b-0dc2-4200-b58f-c21da335d188.jpeg?im_w=720"
+            },
+            {
+                "id": "1048851500",
+                "picture": "https://a0.muscache.com/im/pictures/4310f3fd-cea6-403a-a3f2-5d60fb3d9736.jpg?im_w=720"
+            },
+            {
+                "id": "1062041347",
+                "picture": "https://a0.muscache.com/im/pictures/miso/Hosting-44555924/original/76c92f31-f136-48b2-a9ae-55c0edcff2a2.jpeg?im_w=720"
+            },
+            {
+                "id": "1062044257",
+                "picture": "https://a0.muscache.com/im/pictures/miso/Hosting-44555924/original/e371c469-8e22-47a6-ae2b-4fa34f38b020.jpeg?im_w=720"
+            },
+        ],
+        "serviceFee": {
+            "description": "Service fee",
+            "priceString": "$167"
+        },
+        "cleaningFee": {
+            "description": "Cleaning fee",
+            "priceString": "$100"
+        },
+        "previewInfo": [
+            "4 guests",
+            "2 bedrooms",
+            "3 beds",
+            "2 baths"
+        ],
+        "amenities": [
+            "Pool",
+            "Wifi",
+            "Free parking",
+            "Air conditioning"
+        ],
+        "listingLink": "https://www.airbnb.com/rooms/44555924?adults=3&check_in=2021-09-06&check_out=2021-09-16&previous_page_section_name=1000&federated_search_id=096d7899-146d-4221-b928-1cd2bc05d46a"
+    },
+*/
 
 /*
 const response  = [

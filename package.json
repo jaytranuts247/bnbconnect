@@ -19,6 +19,7 @@
     "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.6",
     "express": "^4.17.1",
+    "jsonpath-plus": "^5.0.7",
     "mime-types": "^2.1.30",
     "puppeteer": "^8.0.0"
   }
