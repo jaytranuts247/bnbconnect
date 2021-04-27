@@ -6,8 +6,8 @@ import SearchIcon from "@material-ui/icons/Search";
 export const StyledHeader = styled.div`
 	width: 100vw;
 
-	${({ isHome }) =>
-		!isHome &&
+	${({ isSearchRoute }) =>
+		isSearchRoute === 1 &&
 		css`
 			border-bottom: 1px solid #ebebeb;
 			${
@@ -142,6 +142,8 @@ export const HeaderContainer = styled.div`
 				line-height: 1.5;
 				border-radius: 10px;
 				color: #222222;
+				z-index: 10;
+				box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 
 				div.sign-up,
 				div.log-in {
@@ -213,4 +215,29 @@ export const Seperator = styled.div`
 	border-right: 1px solid #ddd;
 	flex: 0 0 0px;
 	height: 28px;
+`;
+
+export const ModalBackground = styled.div`
+	display: flex;
+	justify-content: center;
+	align-content: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 20;
+	background: rgba(0, 0, 0, 0.5);
+
+	/* height: 100vh;
+	width: 100vw; */
+
+	.modal-child {
+		display: flex;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		min-width: 450px;
+	}
 `;

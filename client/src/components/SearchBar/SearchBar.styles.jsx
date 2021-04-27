@@ -67,6 +67,7 @@ export const SearchBarContainer = styled.div`
 						color: #717171 !important;
 						font-size: 14px;
 						line-height: 18px;
+						display: flex;
 					}
 				}
 			}
@@ -106,6 +107,7 @@ export const SearchBarContainer = styled.div`
 					line-height: 18px;
 					background: transparent;
 					/* width: 100%; */
+					flex: 1;
 				}
 			}
 

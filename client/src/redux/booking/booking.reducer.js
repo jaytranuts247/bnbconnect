@@ -95,7 +95,8 @@ const bookingReducer = (state = initialState, action) => {
 		case TOGGLE_LOCATION_SEARCH:
 			return {
 				...state,
-				toggleLocationSearch: !state.toggleLocationSearch,
+				toggleLocationSearch:
+					action.payload === DOTOGGLE ? !state.toggleLocationSearch : true,
 				toggleGuest: !state.toggleLocationSearch,
 				toggleDatePick: false,
 				toggleCheckIn: false,

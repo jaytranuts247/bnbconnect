@@ -15,4 +15,19 @@ export const RESET_TOGGLE = "RESET_TOGGLE";
 export const TOGGLE_CHECK_IN = "TOGGLE_CHECK_IN";
 export const TOGGLE_CHECK_OUT = "TOGGLE_CHECK_OUT";
 export const LOAD_RECOMMENDED_LOCATION_RESULTS =
-	"LOAD_RECOMMENDED_LOCATION_RESULTS";
+  "LOAD_RECOMMENDED_LOCATION_RESULTS";
+
+// listing action types
+export const TOGGLE_ISFETCHING = "TOGGLE_ISFETCHING";
+export const SET_LISTINGS = "SET_LISTINGS";
+
+// User action types
+export const SET_CURRENT_USER = "SET_CURRENT_USER";
+export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS";
+export const SIGNUP_FAIL = "SIGNUP_FAIL";
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGIN_FAIL = "LOGIN_FAIL";
+export const LOGOUT = "LOGOUT";
+export const LOGOUT_ERROR = "SIGN_OUT_ERROR";
+export const CLEAR_ERRORS = "CLEAR_ERRORS";
+export const AUTH_ERROR = "AUTH_ERROR";

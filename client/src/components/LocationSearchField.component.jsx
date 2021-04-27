@@ -106,33 +106,32 @@ const LocationSearchField = ({
 }) => {
 	let history = useHistory();
 
-	useEffect(() => {
-		if (selectedLocation) {
-			const validateResult = validateBookingInfo({
-				startDate,
-				endDate,
-				adultsNum: adultsCount,
-				childrenNum: childrenCount,
-				infantsNum: infantsCount,
-				selectedLocation,
-			});
-			console.log("validateResult", validateResult);
+	// useEffect(() => {
+	// 	if (selectedLocation) {
+	// 		const validateResult = validateBookingInfo({
+	// 			startDate,
+	// 			endDate,
+	// 			adultsNum: adultsCount,
+	// 			childrenNum: childrenCount,
+	// 			infantsNum: infantsCount,
+	// 			selectedLocation,
+	// 		});
+	// 		console.log("validateResult", validateResult);
 
-			// Link to search results Page
-			if (validateResult === validateTypes.OK) return history.push("/search");
-			if (validateResult === validateTypes.LOCATION)
-				return handleClickLocation();
-			if (validateResult === validateTypes.START_DATE)
-				return setToggleCheckIn();
-			if (validateResult === validateTypes.END_DATE) return setToggleCheckOut();
-			if (validateResult === validateTypes.NO_GUEST) return setToggleGuest();
-		}
-	}, [selectedLocation]);
+	// 		// Link to search results Page
+	// 		if (validateResult === validateTypes.OK) return history.push("/search");
+	// 		if (validateResult === validateTypes.LOCATION)
+	// 			return handleClickLocation();
+	// 		if (validateResult === validateTypes.START_DATE)
+	// 			return setToggleCheckIn();
+	// 		if (validateResult === validateTypes.END_DATE) return setToggleCheckOut();
+	// 		if (validateResult === validateTypes.NO_GUEST) return setToggleGuest();
+	// 	}
+	// }, [selectedLocation]);
 
 	const handleClickLocationPick = (location) => {
 		// set location
 		setLocation(location);
-
 		// check datepick ?? -> change to date pick
 	};
 

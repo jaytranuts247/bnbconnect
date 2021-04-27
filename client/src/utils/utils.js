@@ -3,6 +3,10 @@ import moment from "moment";
 export const DOTOGGLE = false;
 export const FORCETRUE = true;
 
+export const LOGIN = "LOGIN";
+export const SIGNUP = "SIGNUP";
+
+// for cors bypass
 export const PROXY_URL = "https://cors-anywhere.herokuapp.com/";
 export const TARGET_URL =
 	"https://maps.googleapis.com/maps/api/place/autocomplete/json?&key=KEY";
@@ -55,20 +59,24 @@ export const guestDisplay = (adultsCount, childrenCount, infantsCount) => {
 
 export const validateBookingInfo = (bookingInfo) => {
 	console.log("validateBookingInfo", bookingInfo);
-	if (bookingInfo.selectedLocation === null) return validateTypes.LOCATION;
-	if (bookingInfo.startDate === null) return validateTypes.START_DATE;
-	if (bookingInfo.endDate === null) return validateTypes.END_DATE;
+	const {
+		selectedLocation,
+		startDate,
+		endDate,
+		adultsNum,
+		childrenNum,
+		infantsNum,
+	} = bookingInfo;
+	if (selectedLocation === null) return validateTypes.LOCATION;
+	if (startDate === null) return validateTypes.START_DATE;
+	if (endDate === null) return validateTypes.END_DATE;
 
-	if (
-		bookingInfo.adultsNum + bookingInfo.childrenNum + bookingInfo.infantsNum ===
-		0
-	)
-		return validateTypes.NO_GUEST;
+	if (adultsNum + childrenNum + infantsNum === 0) return validateTypes.NO_GUEST;
 	return validateTypes.OK;
 };
 
-export const dateDisplaySearch = (guestNumber) => {
+export const guestDisplaySearch = (guestNumber) => {
 	return guestNumber === 0
 		? "Add Guests"
-		: guestNumber + (guestNumber <= 1 ? "guest" : "guests");
+		: guestNumber + " " + (guestNumber <= 1 ? "guest" : "guests");
 };

@@ -17,10 +17,17 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
     "cheerio": "^1.0.0-rc.6",
+    "config": "^3.3.6",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-joi-validation": "^5.0.0",
+    "joi": "^17.4.0",
     "jsonpath-plus": "^5.0.7",
+    "jsonwebtoken": "^8.5.1",
     "mime-types": "^2.1.30",
-    "puppeteer": "^8.0.0"
+    "mongoose": "^5.12.5",
+    "puppeteer": "^9.0.0"
   }
 }

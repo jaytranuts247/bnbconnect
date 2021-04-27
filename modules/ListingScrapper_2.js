@@ -5,220 +5,224 @@ const fs = require("fs");
 const path = require("path");
 
 const {
-	getLastWord,
-	isFileExisted,
-	getStayName,
-	extractContent,
-	getPath,
+  getLastWord,
+  isFileExisted,
+  getStayName,
+  extractContent,
+  getPath,
 } = require("../utils/utils");
 
 class ListingScrapper {
-	requestInput = {};
-	url = "";
-	scrappedListings = [];
-	// browser;
+  requestInput = {};
+  url = "";
+  scrappedListings = [];
+  // browser;
 
-	#Selectors = {
-		item: "._8s3ctt",
-		type: "._b14dlit",
-		title: "._5kaapu span",
-		previewInfo: {
-			current: "div._kqh46o",
-			info: "span._3hmsj",
-			amenities: "div._kqh46o",
-		},
-		pricePerNight: "span._olc9rf0",
-		ratings: "span._10fy1f8",
-		reviewNumber: "span._a7a5sx",
-		// images: "._9ofhsl",
-		images: "div._skzmvy img",
-		individualListingLink: "a._mm360j",
-		forwardButton: "._1u6aumhe button",
-		prevButton: "_1qfwqy2d button",
-		individualListing: {
-			ratings: {
-				ratingTotal:
-					'[data-plugin-in-point-id="REVIEWS_DEFAULT"] > div > div > section > h2 > span._goo6eo > div > span',
-				ratingType: "._gmaj6l > div > div > div > div > div > div._y1ba89",
-				ratingNum:
-					"._gmaj6l > div > div > div > div > div > div._bgq2leu > span._4oybiu",
-			},
-			reviews: {
-				reviewUser: "",
-				reviewDate: "",
-				reviewContent: "",
-			},
-			host: {
-				name: "div._f47qa6 ._svr7sj h2", // text()
-				image: "div._f47qa6 > div > div > a > div > div > img",
-				description: "",
-				joined: "div._f47qa6 ._svr7sj div._1fg5h8r",
-				readMoreButton:
-					"div._1byskwn > div._5zvpp1l > div._152qbzi > div > span > div._cfvh61 > div > button",
-				Intro:
-					"div._1byskwn > div._5zvpp1l > ._upzyfk1 > div > span > div > span",
-				IntroClickMore:
-					"div._1byskwn > div._5zvpp1l > ._152qbzi > div > span > div > span",
-			},
-			services: {
-				parent: "._ryvszj",
-				servicesString: "span > button> span._11o89bi",
-				serviceFee: "span._ra05uc",
-				cleaningFee: "span._ra05uc",
-			},
-		},
-	};
+  #Selectors = {
+    item: "._8s3ctt",
+    type: "._b14dlit",
+    title: "._5kaapu span",
+    previewInfo: {
+      current: "div._kqh46o",
+      info: "span._3hmsj",
+      amenities: "div._kqh46o",
+    },
+    pricePerNight: "span._olc9rf0",
+    ratings: "span._10fy1f8",
+    reviewNumber: "span._a7a5sx",
+    // images: "._9ofhsl",
+    images: "div._skzmvy img",
+    individualListingLink: "a._mm360j",
+    forwardButton: "._1u6aumhe button",
+    prevButton: "_1qfwqy2d button",
+    individualListing: {
+      ratings: {
+        ratingTotal:
+          '[data-plugin-in-point-id="REVIEWS_DEFAULT"] > div > div > section > h2 > span._goo6eo > div > span',
+        ratingType: "._gmaj6l > div > div > div > div > div > div._y1ba89",
+        ratingNum:
+          "._gmaj6l > div > div > div > div > div > div._bgq2leu > span._4oybiu",
+      },
+      reviews: {
+        reviewUser: "",
+        reviewDate: "",
+        reviewContent: "",
+      },
+      host: {
+        name: "div._f47qa6 ._svr7sj h2", // text()
+        image: "div._f47qa6 > div > div > a > div > div > img",
+        description: "",
+        joined: "div._f47qa6 ._svr7sj div._1fg5h8r",
+        readMoreButton:
+          "div._1byskwn > div._5zvpp1l > div._152qbzi > div > span > div._cfvh61 > div > button",
+        Intro:
+          "div._1byskwn > div._5zvpp1l > ._upzyfk1 > div > span > div > span",
+        IntroClickMore:
+          "div._1byskwn > div._5zvpp1l > ._152qbzi > div > span > div > span",
+      },
+      services: {
+        parent: "._ryvszj",
+        servicesString: "span > button> span._11o89bi",
+        serviceFee: "span._ra05uc",
+        cleaningFee: "span._ra05uc",
+      },
+    },
+  };
 
-	#urlConfig = {
-		tab_id: "home_tab",
-		date_picker_type: "calendar",
-		baseUrl: "https://www.airbnb.com/s/homes?",
-		source: "structured_search_input_header",
-		search_type: "pagination",
-	};
+  #urlConfig = {
+    tab_id: "home_tab",
+    date_picker_type: "calendar",
+    baseUrl: "https://www.airbnb.com/s/homes?",
+    source: "structured_search_input_header",
+    search_type: "pagination",
+  };
 
-	constructor(url, requestInput) {
-		(this.requestInput = requestInput),
-			(this.url = url),
-			(this.scrappedListings = this.scrappedListings);
-	}
+  constructor(url, requestInput) {
+    (this.requestInput = requestInput),
+      (this.url = url),
+      (this.scrappedListings = this.scrappedListings);
+  }
 
-	getUrl() {
-		return this.url;
-	}
+  getUrl() {
+    return this.url;
+  }
 
-	getSelectors() {
-		return this.#Selectors;
-	}
+  getSelectors() {
+    return this.#Selectors;
+  }
 
-	getScrappedListings = () => this.scrappedListings;
+  getScrappedListings = () => this.scrappedListings;
 
-	urlMake = () => {
-		// return url = `${baseUrl}tab_id=${urlConfig.tab_id}&`
-		const { pagination, bookingInput, locationInfo } = this.requestInput;
-		this.url =
-			this.#urlConfig.baseUrl +
-			`tab_id=${this.#urlConfig.tab_id}` +
-			`&date_picker_type=${this.#urlConfig.date_picker_type}` +
-			`&search_type=${this.#urlConfig.search_type}` +
-			`&source=${this.#urlConfig.source}` +
-			`&query=${locationInfo.structured_formatting.main_text.replace(
-				" ",
-				"%20"
-			)}%2C%20United%20States` +
-			`&checkin=${bookingInput.checkIn}` +
-			`&checkout=${bookingInput.checkOut}` +
-			`&adults=${bookingInput.adults}` +
-			`&children=${bookingInput.children}` +
-			`&place_id=${locationInfo.place_id}` +
-			`&section_offset=${pagination}` +
-			`&items_offset=${(pagination - 1) * 20}`;
-		return this.url;
-	};
+  urlMake = () => {
+    // return url = `${baseUrl}tab_id=${urlConfig.tab_id}&`
+    const { pagination, bookingInput, locationInfo } = this.requestInput;
+    this.url =
+      this.#urlConfig.baseUrl +
+      `tab_id=${this.#urlConfig.tab_id}` +
+      `&date_picker_type=${this.#urlConfig.date_picker_type}` +
+      `&search_type=${this.#urlConfig.search_type}` +
+      `&source=${this.#urlConfig.source}` +
+      `&query=${locationInfo.structured_formatting.main_text.replace(
+        " ",
+        "%20"
+      )}%2C%20United%20States` +
+      `&checkin=${bookingInput.checkIn}` +
+      `&checkout=${bookingInput.checkOut}` +
+      `&adults=${bookingInput.adults}` +
+      `&children=${bookingInput.children}` +
+      `&place_id=${locationInfo.place_id}` +
+      `&section_offset=${pagination}` +
+      `&items_offset=${(pagination - 1) * 20}`;
+    return this.url;
+  };
 
-	static saveImagesToDisk = async () => {
-		return;
-	};
-	static saveTextToDisk = () => {
-		return;
-	};
+  static saveImagesToDisk = async () => {
+    return;
+  };
+  static saveTextToDisk = () => {
+    return;
+  };
 
-	fetchHtml = async () => {
-		let browser;
-		try {
-			browser = await puppeteer.launch({ headless: false });
-			const page = await browser.newPage();
-			page.setViewport({ width: 1280, height: 800 });
-			// waitForSelector ??
-			await page.goto(this.url, { waitUntil: "networkidle2" });
-			const content = await page.content();
-			// await browser.close();
-			return content;
-		} catch (err) {
-			if (browser) await browser.close();
-			throw new Error(err);
-		}
-	};
+  fetchHtml = async () => {
+    let browser;
+    try {
+      browser = await puppeteer.launch({ headless: false });
+      const page = await browser.newPage();
+      page.setViewport({ width: 1280, height: 800 });
+      // waitForSelector ??
+      await page.goto(this.url, { waitUntil: "networkidle2" });
+      // const content = await page.content();
+      const content = await page.evaluate(() => document.body.innerHTML);
 
-	ScrapeHtml = async () => {
-		// let browser;
-		var listingData = [];
-		var loadingAttempt = 0;
-		try {
-			// make the url
-			this.urlMake();
+      // await browser.close();
+      return content;
+    } catch (err) {
+      if (browser) await browser.close();
+      throw new Error(err);
+    } finally {
+      if (browser) await browser.close();
+    }
+  };
 
-			console.log("start Scrapping");
-			// browser = await puppeteer.launch({ headless: false });
-			// var page = await browser.newPage();
-			// page.setViewport({ width: 1280, height: 800 });
+  ScrapeHtml = async () => {
+    // let browser;
+    var listingData = [];
+    var loadingAttempt = 0;
+    try {
+      // make the url
+      this.urlMake();
 
-			while (listingData.length === 0 || loadingAttempt < 2) {
-				// await page.goto(this.url, { waitUntil: "networkidle2" });
-				// await page.goto(this.url);
-				// page.waitForSelector("._8s3ctt a");
-				// page.waitForSelector("#data-state");
+      console.log("start Scrapping");
+      // browser = await puppeteer.launch({ headless: false });
+      // var page = await browser.newPage();
+      // page.setViewport({ width: 1280, height: 800 });
 
-				// const html = await page.content();
-				// var html = await page.evaluate(() => document.body.innerHTML);
+      while (listingData.length === 0 || loadingAttempt < 2) {
+        // await page.goto(this.url, { waitUntil: "networkidle2" });
+        // await page.goto(this.url);
+        // page.waitForSelector("._8s3ctt a");
+        // page.waitForSelector("#data-state");
 
-				// get html file
-				var html = await this.fetchHtml();
+        // const html = await page.content();
+        // var html = await page.evaluate(() => document.body.innerHTML);
 
-				// save html file to disk
-				fs.writeFileSync("./test.html", html);
+        // get html file
+        var html = await this.fetchHtml();
 
-				// load html with cheerio
-				var $ = cheerio.load(html);
+        // save html file to disk
+        fs.writeFileSync("./test.html", html);
 
-				// get response data
-				var dataRes = $("#data-state").html();
-				// fs.writeFileSync("./datares.txt", dataRes);
+        // load html with cheerio
+        var $ = cheerio.load(html);
 
-				var jsonData = await JSON.parse(dataRes);
-				// fs.writeFileSync("./jsonData.js", jsonData);
-				console.log(loadingAttempt + " attempt");
+        // get response data
+        var dataRes = $("#data-state").html();
+        fs.writeFileSync("./datares.txt", dataRes);
 
-				if (
-					jsonData &&
-					jsonData.niobeMinimalClientData &&
-					jsonData.niobeMinimalClientData[1] &&
-					jsonData.niobeMinimalClientData[1][1]
-				) {
-					listingData =
-						jsonData.niobeMinimalClientData[1][1].data.dora.exploreV3
-							.sections[0].items;
-				}
+        var jsonData = await JSON.parse(dataRes);
+        // fs.writeFileSync("./jsonData.js", jsonData);
+        console.log(loadingAttempt + " attempt");
 
-				if (
-					jsonData &&
-					jsonData.niobeApolloClientData &&
-					jsonData.niobeApolloClientData.__niobe_denormalized &&
-					jsonData.niobeApolloClientData.__niobe_denormalized.queries[0] &&
-					jsonData.niobeApolloClientData.__niobe_denormalized.queries[0][1]
-				) {
-					listingData =
-						jsonData.niobeApolloClientData.__niobe_denormalized.queries[0][1]
-							.dora.exploreV3.sections[0].items;
-				}
+        if (
+          jsonData &&
+          jsonData.niobeMinimalClientData &&
+          jsonData.niobeMinimalClientData[1] &&
+          jsonData.niobeMinimalClientData[1][1]
+        ) {
+          listingData =
+            jsonData.niobeMinimalClientData[1][1].data.dora.exploreV3
+              .sections[0].items;
+        }
 
-				if (!listingData) {
-					if (loadingAttempt === 1) {
-						console.log("error loading data");
-						break;
-					}
-					console.log(
-						"data not existed!!" + " on " + loadingAttempt + " attempt"
-					);
-					console.log("retry...");
-					loadingAttempt++;
-				} else {
-					console.log("data loaded!!");
-					break;
-				}
-			}
+        if (
+          jsonData &&
+          jsonData.niobeApolloClientData &&
+          jsonData.niobeApolloClientData.__niobe_denormalized &&
+          jsonData.niobeApolloClientData.__niobe_denormalized.queries[0] &&
+          jsonData.niobeApolloClientData.__niobe_denormalized.queries[0][1]
+        ) {
+          listingData =
+            jsonData.niobeApolloClientData.__niobe_denormalized.queries[0][1]
+              .dora.exploreV3.sections[0].items;
+        }
 
-			/*
+        if (!listingData) {
+          if (loadingAttempt === 1) {
+            console.log("error loading data");
+            break;
+          }
+          console.log(
+            "data not existed!!" + " on " + loadingAttempt + " attempt"
+          );
+          console.log("retry...");
+          loadingAttempt++;
+        } else {
+          console.log("data loaded!!");
+          break;
+        }
+      }
+
+      /*
 			const html = fs.readFileSync("./test.html", "utf8");
 			var $ = cheerio.load(html);
 			const dataText = $("#data-state").html();
@@ -248,142 +252,152 @@ class ListingScrapper {
 				return;
 			}
 */
-			fs.writeFileSync("./listingData.txt", JSON.stringify(listingData));
+      fs.writeFileSync("./listingData.txt", JSON.stringify(listingData));
 
-			// get LatLng
-			listingData.map((item, idx) => {
-				const {
-					city,
-					avgRating,
-					contextualPictures,
-					kickerContent,
-					lat,
-					lng,
-					previewAmenityNames,
-					roomAndPropertyType,
-					user,
-					publicAddress,
-				} = item.listing;
-				const { pricingQuote } = item;
-				// console.log("pricingQuote", pricingQuote);
-				this.scrappedListings.push({
-					coords: {
-						lat,
-						lng,
-					},
-					city,
-					avgRating,
-					kickerContent: kickerContent.messages[0],
-					previewAmenityNames,
-					roomAndPropertyType,
-					publicAddress,
-					user: {
-						id: user.id,
-						pictureUrl: user.pictureUrl,
-						thumbnailUrl: user.thumbnailUrl,
-					},
-					images: this.getImages(contextualPictures),
-					serviceFee: this.getPriceQuote(
-						pricingQuote.structuredStayDisplayPrice.explanationData
-							.priceDetails[0].items,
-						"Service fee"
-					),
-					cleaningFee: this.getPriceQuote(
-						pricingQuote.structuredStayDisplayPrice.explanationData
-							.priceDetails[0].items,
-						"Cleaning fee"
-					),
-				});
-			});
+      // get LatLng
+      listingData.map((item, idx) => {
+        const {
+          city,
+          avgRating,
+          contextualPictures,
+          kickerContent,
+          lat,
+          lng,
+          previewAmenityNames,
+          roomAndPropertyType,
+          user,
+          publicAddress,
+        } = item.listing;
+        const { pricingQuote } = item;
+        // console.log("pricingQuote", pricingQuote);
+        this.scrappedListings.push({
+          locationInfo: {
+            description: this.requestInput.locationInfo.description,
+            place_id: this.requestInput.locationInfo.place_id,
+          },
+          coords: {
+            lat,
+            lng,
+          },
+          city,
+          avgRating,
+          kickerContent: kickerContent.messages[0],
+          previewAmenityNames,
+          roomAndPropertyType,
+          publicAddress,
+          user: {
+            id: user.id,
+            pictureUrl: user.pictureUrl,
+            thumbnailUrl: user.thumbnailUrl,
+          },
+          images: this.getImages(contextualPictures),
+          serviceFee: this.getPriceQuote(
+            pricingQuote.structuredStayDisplayPrice.explanationData
+              .priceDetails[0].items,
+            "Service fee"
+          ),
+          cleaningFee: this.getPriceQuote(
+            pricingQuote.structuredStayDisplayPrice.explanationData
+              .priceDetails[0].items,
+            "Cleaning fee"
+          ),
+        });
+      });
 
-			console.log("loaded cheerio");
-			// Start scrapping
-			const listings = $(this.#Selectors.item);
-			// console.log("listings", listings);
+      console.log("loaded cheerio");
+      // Start scrapping
+      const listings = $(this.#Selectors.item);
+      // console.log("listings", listings);
 
-			listings.each((idx, listing) => {
-				let previewInfo = [],
-					amenities = [];
+      listings.each((idx, listing) => {
+        let previewInfo = [],
+          amenities = [];
+        let reviewNumber = 0;
 
-				const $$ = cheerio.load(listing);
+        const $$ = cheerio.load(listing);
 
-				// scrape the listing title
-				let title = $$(this.#Selectors.title).text();
-				let type = $$(this.#Selectors.type).text();
-				let location = getStayName($$(this.#Selectors.type).text());
-				let pricePerNight = $$(this.#Selectors.pricePerNight).text();
-				let ratings = $$(this.#Selectors.ratings).text();
-				let reviewNumber = $$(this.#Selectors.reviewNumber)
-					.text()
-					.trim()
-					.match(/(\d+)/g);
+        // scrape the listing title
+        let title = $$(this.#Selectors.title).text();
+        let type = $$(this.#Selectors.type).text();
+        let location = getStayName($$(this.#Selectors.type).text());
+        let pricePerNight = $$(this.#Selectors.pricePerNight).text();
+        let ratings = $$(this.#Selectors.ratings).text();
+        let reviewNumberArr = $$(this.#Selectors.reviewNumber)
+          .text()
+          .trim()
+          .match(/(\d+)/g);
+        if (reviewNumberArr?.length !== 0) {
+          reviewNumber = reviewNumberArr ? reviewNumberArr[0] : 0;
+        } else {
+          console.log("reviewNumber cannot be found");
+        }
 
-				// scrape previewInfo
-				$$(this.#Selectors.previewInfo.current)
-					.first()
-					.children(this.#Selectors.previewInfo.info)
-					.each((i, e) => {
-						previewInfo.push($$(e).text());
-					});
+        // scrape previewInfo
+        $$(this.#Selectors.previewInfo.current)
+          .first()
+          .children(this.#Selectors.previewInfo.info)
+          .each((i, e) => {
+            previewInfo.push($$(e).text());
+          });
 
-				// scrape amenities
-				$$(this.#Selectors.previewInfo.current)
-					.next()
-					.children(this.#Selectors.previewInfo.info)
-					.each((i, e) => {
-						amenities.push($$(e).text());
-					});
+        // scrape amenities
+        $$(this.#Selectors.previewInfo.current)
+          .next()
+          .children(this.#Selectors.previewInfo.info)
+          .each((i, e) => {
+            amenities.push($$(e).text());
+          });
 
-				// get links
-				let listingLink =
-					"https://www.airbnb.com" +
-					$$(this.#Selectors.individualListingLink).attr("href");
+        // get links
+        let listingLink =
+          "https://www.airbnb.com" +
+          $$(this.#Selectors.individualListingLink).attr("href");
 
-				// push to scrappedListings
-				// this.scrappedListings.push(scrappedListingInfo);
-				this.scrappedListings[idx] = {
-					title,
-					type,
-					location,
-					pricePerNight,
-					ratings,
-					reviewNumber,
-					...this.scrappedListings[idx],
-					previewInfo,
-					amenities,
-					listingLink,
-				};
-			});
+        // push to scrappedListings
+        // this.scrappedListings.push(scrappedListingInfo);
+        this.scrappedListings[idx] = {
+          title,
+          type,
+          location,
+          pricePerNight,
+          ratings,
+          reviewNumber,
+          ...this.scrappedListings[idx],
+          previewInfo,
+          amenities,
+          listingLink,
+        };
+      });
 
-			return this.scrappedListings;
-		} catch (err) {
-			throw new Error(err);
-		}
-	};
+      return this.scrappedListings;
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
 
-	getPriceQuote = (priceList, priceTag) => {
-		try {
-			if (priceList.length === 0 || !priceList)
-				console.log("priceQoute not existed");
-			let priceQuotes = priceList.filter(
-				(item) => item.description === priceTag
-			)[0];
-			// console.log("priceQuotes", priceQuotes);
-			return {
-				description: (priceQuotes && priceQuotes.description) || priceTag,
-				priceString: (priceQuotes && priceQuotes.priceString) || 0,
-			};
-		} catch (err) {
-			console.log(err);
-		}
-	};
+  getPriceQuote = (priceList, priceTag) => {
+    try {
+      if (priceList.length === 0 || !priceList)
+        console.log("priceQoute not existed");
+      let priceQuotes = priceList.filter(
+        (item) => item.description === priceTag
+      )[0];
+      // console.log("priceQuotes", priceQuotes);
+      return {
+        description: (priceQuotes && priceQuotes.description) || priceTag,
+        priceString: (priceQuotes && priceQuotes.priceString) || 0,
+      };
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-	getImages = (picturesList) => {
-		return picturesList.map((item) => ({
-			id: item.id,
-			picture: item.picture,
-		}));
-	};
+  getImages = (picturesList) => {
+    return picturesList.map((item) => ({
+      id: item.id,
+      picture: item.picture,
+    }));
+  };
 }
 
 module.exports = ListingScrapper;
@@ -521,7 +535,7 @@ const response  = [
 
 /*
  {
-    "pagination": 1,
+  "pagination": 1,
 	"bookingInput": {
 		"adults": 3,
 		"children": 0,

@@ -1,6 +1,8 @@
 import { createGlobalStyle, css } from "styled-components";
+import Fonts from "./font";
 
 const GlobalStyle = createGlobalStyle`
+  ${Fonts}
 
   :root {
     --rich-black-fogra-29: #011627ff;
@@ -9,7 +11,7 @@ const GlobalStyle = createGlobalStyle`
     --baby-powder: #fdfffcff;
     --orange-peel: #ff9f1cff;
 
-    --font-sans: 'Lora', 'Roboto', 'Source Serif Pro', -apple-system, system-ui, sans-serif;
+    --font-sans: 'Product Sans', -apple-system, system-ui, sans-serif;
     --font-mono: 'Cutive Mono', 'Roboto Mono','Fira Mono', monospace;
   }
 
@@ -116,7 +118,7 @@ const GlobalStyle = createGlobalStyle`
 
     code {
 	    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
-}
+    }
   }
 `;
 
