@@ -96,7 +96,7 @@ const SearchBar = ({
   // * Handle query autocompletion
   useEffect(() => {
     if (window.google) {
-      const input = document.getElementById("location-input");
+      // const input = document.getElementById("location-input");
       // const autocomplete = new window.google.maps.places.Autocomplete(input);
       // autocomplete.addListener("place_changed", () => {
       // 	console.log("autocomplete");
@@ -135,9 +135,13 @@ const SearchBar = ({
   }, [selectedLocation]);
 
   useEffect(() => {
-    if (!RecommendedResults) return;
-    if (!toggleLocationSearch) setToggleLocationSearch(FORCETRUE);
-  }, [RecommendedResults]);
+    if (toggleLocationSearch) inputRef.current.focus();
+  }, [toggleLocationSearch]);
+
+  // useEffect(() => {
+  //   if (!RecommendedResults) return;
+  //   if (!toggleLocationSearch) setToggleLocationSearch(FORCETRUE);
+  // }, [RecommendedResults, locationInput]);
 
   const handleDatePick = (ranges) => {
     console.log(ranges);
@@ -210,8 +214,8 @@ const SearchBar = ({
   const handleInputChange = (e) => {
     if (e) e.preventDefault();
     setLocationInput(e.target.value);
-    // if (!toggleLocationSearch && RecommendedResults)
-    // 	setToggleLocationSearch(FORCETRUE);
+    if (!toggleLocationSearch && RecommendedResults)
+      setToggleLocationSearch(FORCETRUE);
   };
 
   const handleClickCheckIn = () => setToggleCheckIn();

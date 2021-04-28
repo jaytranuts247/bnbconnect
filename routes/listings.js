@@ -8,6 +8,7 @@ const ListingScrapper = require("../modules/ListingScrapper_2");
 const Listing = require("../model/listing");
 const listing = require("../model/listing");
 const { listIndexes } = require("../model/listing");
+const { addDates } = require("../utils/utils");
 
 // https://www.airbnb.com/s/Las-Vegas--NV--United-States/homes?tab_id=home_tab&refinement_paths%5B%5D=%2Fhomes&flexible_trip_dates%5B%5D=april&flexible_trip_dates%5B%5D=may&flexible_trip_lengths%5B%5D=weekend_trip&date_picker_type=calendar&checkin=2021-09-14&checkout=2021-09-22&adults=5&source=structured_search_input_header&search_type=autocomplete_click&place_id=ChIJ0X31pIK3voARo3mz1ebVzDo
 // https://www.airbnb.com/s/Las-Vegas--NV--United-States/homes?tab_id=home_tab&refinement_paths%5B%5D=%2Fhomes&flexible_trip_dates%5B%5D=april&flexible_trip_dates%5B%5D=may&flexible_trip_lengths%5B%5D=weekend_trip&date_picker_type=calendar&checkin=2021-09-14&checkout=2021-09-22&adults=5&source=structured_search_input_header&search_type=autocomplete_click&place_id=ChIJ0X31pIK3voARo3mz1ebVzDo
@@ -93,8 +94,16 @@ router.post("/", async (req, res) => {
       // get 20 listings
       let listingTwenty = listingFound.slice(0, 21);
       console.log(`Send response of ${listingTwenty.length} listings`);
-
       if (listingTwenty?.length !== 0) flag = true; // if listings found then set flag to stop while loop
+
+      let newListingTwenty = [
+        ...addDates(listingTwenty, {
+          checkIn: "12121",
+          checkOut: "1212331",
+        }),
+      ];
+
+      console.log(listingFound[0], listingTwenty[0], newListingTwenty[0]);
 
       // res send
       res.json(listingTwenty);

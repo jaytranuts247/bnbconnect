@@ -10,15 +10,16 @@ import WithLoading from "../components/WithLoading.component";
 const Container = styled.div`
   display: flex;
   width: 100vw;
+  flex: 1;
 
   .search__left {
     max-width: 808px;
-    flex: 1 1 55%;
+    flex: 0 0 60%;
     height: 100vh;
-    overflow: scroll;
+    overflow: auto;
   }
   .search__right {
-    flex: 1 1 45%;
+    flex: 0 0 40%;
     height: 100vh;
   }
 `;

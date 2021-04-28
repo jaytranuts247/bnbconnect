@@ -27,9 +27,8 @@ const SearchListings = ({ listings }) => {
       <div className="bnb-listing">
         {listings &&
           listings.map((listing, idx) => (
-            <StayItem key={idx} listing={listing} idx={idx} />
+            <>{listing && <StayItem key={idx} listing={listing} idx={idx} />}</>
           ))}
-        <StayItem />
       </div>
     </Container>
   );
