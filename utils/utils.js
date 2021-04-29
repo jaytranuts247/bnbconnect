@@ -68,10 +68,7 @@ const getRating = (s) => {
 
 const addDates = (listings, toBeAdded) => {
   return listings.map((listing) => {
-    return {
-      ...listing,
-      ...toBeAdded,
-    };
+    return Object.assign({}, listing.toJSON(), toBeAdded);
   });
 };
 

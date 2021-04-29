@@ -96,17 +96,15 @@ router.post("/", async (req, res) => {
       console.log(`Send response of ${listingTwenty.length} listings`);
       if (listingTwenty?.length !== 0) flag = true; // if listings found then set flag to stop while loop
 
-      let newListingTwenty = [
-        ...addDates(listingTwenty, {
-          checkIn: "12121",
-          checkOut: "1212331",
-        }),
-      ];
+      let newListingTwenty = addDates(listingTwenty, {
+        checkIn: req.body.bookingInput.checkIn,
+        checkOut: req.body.bookingInput.checkOut,
+      });
 
-      console.log(listingFound[0], listingTwenty[0], newListingTwenty[0]);
+      // console.log(listingFound[0], listingTwenty[0], newListingTwenty);
 
       // res send
-      res.json(listingTwenty);
+      res.send(newListingTwenty);
     }
   } catch (err) {
     console.log(err);

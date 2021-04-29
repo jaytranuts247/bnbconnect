@@ -20,6 +20,7 @@ export const LOAD_RECOMMENDED_LOCATION_RESULTS =
 // listing action types
 export const TOGGLE_ISFETCHING = "TOGGLE_ISFETCHING";
 export const SET_LISTINGS = "SET_LISTINGS";
+export const SET_FILTERED_LISTINGS = "SET_FILTERED_LISTINGS";
 
 // User action types
 export const SET_CURRENT_USER = "SET_CURRENT_USER";

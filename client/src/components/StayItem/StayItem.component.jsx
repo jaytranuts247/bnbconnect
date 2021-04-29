@@ -8,8 +8,10 @@ import {
   ShortSeperator,
 } from "./StayItem.styles";
 import PropTypes from "prop-types";
-import { Seperator } from "../Header/Header.styles";
+
 import StarIcon from "@material-ui/icons/Star";
+
+import { calcDayDiff, getPriceNum, getTotalPrice } from "../../utils/utils";
 
 const StayItem = ({ listing, idx }) => {
   const {
@@ -21,9 +23,12 @@ const StayItem = ({ listing, idx }) => {
     ratings,
     reviewNumber,
     pricePerNight,
+    checkIn,
+    checkOut,
   } = listing;
+
   return (
-    <Wrapper>
+    <Wrapper className="bnb-listing-item">
       <ListingContainer>
         <div className="left-side">
           <div className="slider-container">
@@ -71,23 +76,31 @@ const StayItem = ({ listing, idx }) => {
           <div className="price-review-info">
             <div className="price-review-info-container">
               <div className="review-info">
-                <span>
-                  <StarIcon style={{ color: "#ff385c", fontSize: "20" }} />
-                </span>
-                <span id="rating">{ratings} </span>
-                <span id="review-number">
-                  ({reviewNumber}{" "}
-                  {parseInt(reviewNumber, 10) > 1 ? "reviews" : "review"})
-                </span>
+                <div className="review-info__details">
+                  <span>
+                    <StarIcon style={{ color: "#ff385c", fontSize: "20" }} />
+                  </span>
+                  <span id="rating">{ratings} </span>
+                  <span id="review-number">
+                    ({reviewNumber}{" "}
+                    {parseInt(reviewNumber, 10) > 1 ? "reviews" : "review"})
+                  </span>
+                </div>
               </div>
               <div className="price-details">
                 <div className="price-details__price-per-night">
                   <span id="price">{pricePerNight}</span>
-                  <span id="night"> / night</span>
+                  <span id="night"> / night </span>
                 </div>
                 <div className="price-details__price-total">
-                  <span></span>
-                  <span>total</span>
+                  <span>
+                    $
+                    {getTotalPrice(
+                      getPriceNum(pricePerNight),
+                      calcDayDiff(checkIn, checkOut)
+                    )}
+                  </span>
+                  <span> total</span>
                 </div>
               </div>
             </div>
@@ -110,6 +123,8 @@ StayItem.defaultProps = {
     ratings: "",
     reviewNumber: "",
     pricePerNight: "",
+    checkIn: "",
+    checkOut: "",
   },
   idx: 0,
 };

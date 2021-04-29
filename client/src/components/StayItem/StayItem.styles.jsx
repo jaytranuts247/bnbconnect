@@ -6,6 +6,8 @@ export const ListingContainer = styled.div`
   height: 100%;
   overflow: auto;
   padding: 20px 10px;
+  margin: 10px;
+  cursor: pointer;
 
   .left-side {
     display: flex;
@@ -138,29 +140,41 @@ export const ListingContainer = styled.div`
         display: flex;
         justify-content: space-between;
         width: 100%;
+
         .review-info {
           display: flex;
-          align-items: center;
+          align-items: flex-end;
           font-size: 14px;
 
-          span#rating {
-            font-weight: 700;
-            margin-left: 3px;
-          }
-          span#review-number {
-            margin-left: 5px;
-            color: #717171;
+          &__details {
+            display: flex;
+            align-items: center;
+            span#rating {
+              font-weight: 700;
+              margin-left: 3px;
+            }
+            span#review-number {
+              margin-left: 5px;
+              color: #717171;
+            }
           }
         }
 
         .price-details {
           display: flex;
           align-items: flex-end;
+          padding: 0 5px;
           flex-direction: column;
           color: #222222;
+          z-index: 10;
+          margin-right: 10px;
+          /* white-space: normal;
+          word-break: break-word; */
 
           &__price-per-night {
             font-size: 18px;
+
+            display: flex;
             #price {
               font-weight: 700;
             }
@@ -174,6 +188,7 @@ export const ListingContainer = styled.div`
             font-size: 14px;
             color: #717171;
             text-decoration: underline;
+            white-space: nowrap;
           }
         }
       }

@@ -39,7 +39,10 @@ export const Container = styled.div`
   .bnb-listing {
     display: flex;
     flex-direction: column;
-    position: relative;
+
+    .bnb-listing-item:not(:last-child) {
+      border-top: 1px solid #ebebeb;
+    }
 
     .bnb-listing__item {
       width: 100%;

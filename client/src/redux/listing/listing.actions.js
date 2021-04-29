@@ -1,4 +1,9 @@
-import { SET_LISTINGS, TOGGLE_ISFETCHING } from "../types";
+import {
+  SET_LISTINGS,
+  TOGGLE_ISFETCHING,
+  SET_FILTERED_LISTINGS,
+} from "../types";
+import { filterListingInBound } from "../../utils/map_utils";
 
 const toggleIsFetching = () => ({
   type: TOGGLE_ISFETCHING,
@@ -26,6 +31,20 @@ export const setListings = (requestBody) => async (dispatch) => {
       // dispatch(toggleIsFetching());
       dispatch(toggleIsFetching());
     }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const filterOnMapChange = (bounds, listings) => async (dispatch) => {
+  try {
+    // console.log("filterOnMapChange");
+    const filtered = await listings.filter((listing) => {
+      return filterListingInBound(bounds, listing.coords);
+    });
+    // console.log("filtered", filtered);
+
+    dispatch({ type: SET_FILTERED_LISTINGS, payload: filtered });
   } catch (err) {
     console.log(err);
   }

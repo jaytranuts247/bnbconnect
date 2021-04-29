@@ -1,8 +1,13 @@
-import { SET_LISTINGS, TOGGLE_ISFETCHING } from "../types";
+import {
+  SET_LISTINGS,
+  TOGGLE_ISFETCHING,
+  SET_FILTERED_LISTINGS,
+} from "../types";
 
 const initialState = {
   isFetching: false,
   listings: null,
+  filtered_listings: null,
 };
 
 const listingReducer = (state = initialState, action) => {
@@ -16,6 +21,11 @@ const listingReducer = (state = initialState, action) => {
       return {
         ...state,
         listings: [...action.payload],
+      };
+    case SET_FILTERED_LISTINGS:
+      return {
+        ...state,
+        filtered_listings: [...action.payload],
       };
     default:
       return state;

@@ -9,7 +9,7 @@ import {
 } from "./SearchListing.styles";
 import StayItem from "../StayItem/StayItem.component";
 
-const SearchListings = ({ listings }) => {
+const SearchListings = ({ listings, filtered_listings }) => {
   return (
     <Container>
       <div className="listing-location">
@@ -23,12 +23,19 @@ const SearchListings = ({ listings }) => {
           <StyledFilterButton>More filters</StyledFilterButton>
         </div>
       </div>
-      <HSeperator />
+      {/* <HSeperator /> */}
       <div className="bnb-listing">
-        {listings &&
-          listings.map((listing, idx) => (
-            <>{listing && <StayItem key={idx} listing={listing} idx={idx} />}</>
-          ))}
+        {filtered_listings && filtered_listings.length !== 0
+          ? filtered_listings.map((listing, idx) => (
+              <>
+                {listing && <StayItem key={idx} listing={listing} idx={idx} />}
+              </>
+            ))
+          : listings.map((listing, idx) => (
+              <>
+                {listing && <StayItem key={idx} listing={listing} idx={idx} />}
+              </>
+            ))}
       </div>
     </Container>
   );
@@ -36,6 +43,7 @@ const SearchListings = ({ listings }) => {
 
 const mapStateToProps = ({ listing }) => ({
   listings: listing.listings,
+  filtered_listings: listing.filtered_listings,
 });
 
 const mapDispatchToProps = {};
