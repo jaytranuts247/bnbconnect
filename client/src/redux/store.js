@@ -1,10 +1,9 @@
 import { createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import logger from "redux-logger";
-import rootReducer from "./rootReducer";
+import persistedReducer from "./rootReducer";
 import thunk from "redux-thunk";
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+import { persistStore } from "redux-persist";
 
 // Note: logger must be the last middleware in chain,
 // otherwise it will log thunk and promise,
@@ -15,13 +14,6 @@ if (process.env.NODE_ENV === "development") {
   middlewares.push(logger);
 }
 
-const persistConfig = {
-  key: "root",
-  storage,
-};
-
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
 const initialState = {};
 
 const store = createStore(
@@ -31,6 +23,5 @@ const store = createStore(
 );
 
 export const persistor = persistStore(store);
-const reduxPersistor = { store, persistor };
 
-export default reduxPersistor;
+export default store;

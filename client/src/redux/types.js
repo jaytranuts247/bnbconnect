@@ -32,3 +32,7 @@ export const LOGOUT = "LOGOUT";
 export const LOGOUT_ERROR = "SIGN_OUT_ERROR";
 export const CLEAR_ERRORS = "CLEAR_ERRORS";
 export const AUTH_ERROR = "AUTH_ERROR";
+
+// alert action types
+export const SET_ALERT = "SET_ALERT";
+export const REMOVE_ALERT = "REMOVE_ALERT";

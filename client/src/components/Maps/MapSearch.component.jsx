@@ -28,10 +28,56 @@ const MapSearch = ({
   const _onClick = ({ x, y, lat, lng, event }) =>
     console.log(x, y, lat, lng, event);
 
-  const _onDragEnd = (map) => {
-    console.log(map);
+  // const _onDragEnd = (map) => {
+  //   console.log(map);
+  //   return;
+  // };
 
-    return;
+  // const _onGoogleApiLoaded = ({ map, maps }) => {
+  //   // console.log( maps);
+  // };
+
+  const createMapOptions = (maps) => {
+    return {
+      panControl: false,
+      mapTypeControl: false,
+      scrollwheel: false,
+      styles: [
+        // {
+        //   featureType: "road.arterial",
+        //   elementType: "geometry",
+        //   stylers: [{ color: "#c5c5c5" }],
+        // },
+        {
+          featureType: "road.highway",
+          elementType: "geometry",
+          stylers: [{ color: "#dddddd" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#c5c5c5" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels.icon",
+          stylers: [{ color: "#b0b0b0" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#b0b0b0" }],
+        },
+        {
+          stylers: [
+            { saturation: -10 },
+            { gamma: 0.8 },
+            { lightness: 4 },
+            { visibility: "on" },
+          ],
+        },
+      ],
+    };
   };
 
   return (
@@ -43,7 +89,9 @@ const MapSearch = ({
           defaultZoom={zoom}
           onClick={_onClick}
           onChange={_onBoundsChange}
-          onDragEnd={_onDragEnd}
+          // onDragEnd={_onDragEnd}
+          // onGoogleApiLoaded={_onGoogleApiLoaded}
+          options={createMapOptions}
         >
           {filtered_listings && filtered_listings.length !== 0
             ? filtered_listings.map((listing) => (
@@ -91,14 +139,3 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapSearch);
-
-// map feature
-
-/*
- * search on map
- * - filter new listings onMapDrag ---> OK
- * - debounce search - limit search ----> OK
- * - check for duplicate before write to DB
- * - make dummmy reviews
- * - scrappe with pagination -> 100 listings ???
- */

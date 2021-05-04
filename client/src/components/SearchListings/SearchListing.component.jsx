@@ -1,12 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { Button } from "@material-ui/core";
-import {
-  HSeperator,
-  Container,
-  StyledFilterButton,
-} from "./SearchListing.styles";
+import { Container, StyledFilterButton } from "./SearchListing.styles";
 import StayItem from "../StayItem/StayItem.component";
 
 const SearchListings = ({ listings, filtered_listings }) => {

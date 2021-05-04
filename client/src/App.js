@@ -10,6 +10,8 @@ import Home from "./pages/Home";
 import SearchPage from "./pages/SearchPage";
 import setAuthToken from "./utils/setAuthToken";
 import Loading from "./components/Loading.component";
+import Profile from "./pages/Profile";
+import Booking from "./pages/Booking";
 
 export const BackgroundOverlay = styled.div`
   z-index: -10;
@@ -41,7 +43,9 @@ function App({ isFetching }) {
           path="/search"
           render={(props) => <SearchPage isFetching={isFetching} {...props} />}
         />
-        <Route exact path="/loading" component={Loading} />
+        <Route exact path="/booking/:id" component={Booking} />
+        <Route exact path="/profile/:id" component={Profile} />
+        {/* <Route exact path="/loading" component={Loading} /> */}
       </Switch>
     </div>
   );
@@ -51,3 +55,16 @@ const mapStateToProps = ({ listing }) => ({
 });
 
 export default connect(mapStateToProps)(App);
+
+/*
+ * search on map
+ * - filter new listings onMapDrag
+ *   - send request to server to get more listings if place_id is different
+ * - debounce search - limit search ----> OK
+ * - check for duplicate before write to DB
+ * - make dummmy reviews
+ * - scrappe with pagination -> 100 listings ???
+ * - Map
+ *   - show popup once click to item on map
+ *   - calculate the location to show on map (get map width and height, location of the price tag)
+ */
