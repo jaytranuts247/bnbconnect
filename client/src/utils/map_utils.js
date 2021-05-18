@@ -26,3 +26,14 @@ export const filterListingInBound = (bounds, coords) => {
 
   return result;
 };
+
+export const getCenter = (listings, initialCenter = { lat: 0, lng: 0 }) => {
+  const newCenter = listings.reduce((acc, listing) => {
+    const { coords } = listing;
+    acc.lat = (acc.lat + coords.lat) / 2;
+    acc.lng = (acc.lng + coords.lng) / 2;
+    return acc;
+  }, initialCenter);
+
+  return newCenter;
+};

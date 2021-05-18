@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
 import { LatLngLocations } from "../../config";
 import ListingLocationMarker from "../ListingLocationMarker/ListingLocationMarker.component";
 import { filterOnMapChange } from "../../redux/listing/listing.actions";
+import { getCenter } from "../../utils/map_utils";
 
 const MapContainer = styled.div`
   display: flex;
@@ -19,6 +20,8 @@ const MapSearch = ({
   filtered_listings,
   filterOnMapChange,
 }) => {
+  const [mapCenter, setMapCenter] = useState(center);
+  const [mapZoom, setMapZoom] = useState(zoom);
   const _onBoundsChange = ({ bounds }) => {
     // console.log({ center, zoom, bounds, marginBounds }, center);
     // console.log("update listings", bounds);
@@ -36,6 +39,13 @@ const MapSearch = ({
   // const _onGoogleApiLoaded = ({ map, maps }) => {
   //   // console.log( maps);
   // };
+
+  useEffect(() => {
+    if (!listings) return;
+    const avgCenter = getCenter(listings);
+    setMapCenter(avgCenter);
+    setMapZoom(13);
+  }, [listings]);
 
   const createMapOptions = (maps) => {
     return {
@@ -82,48 +92,51 @@ const MapSearch = ({
 
   return (
     <div>
-      <MapContainer>
-        <GoogleMapReact
-          bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY }}
-          defaultCenter={center}
-          defaultZoom={zoom}
-          onClick={_onClick}
-          onChange={_onBoundsChange}
-          // onDragEnd={_onDragEnd}
-          // onGoogleApiLoaded={_onGoogleApiLoaded}
-          options={createMapOptions}
-        >
-          {filtered_listings && filtered_listings.length !== 0
-            ? filtered_listings.map((listing) => (
-                <ListingLocationMarker
-                  key={listing._id}
-                  lat={listing.coords.lat}
-                  lng={listing.coords.lng}
-                  text={listing.pricePerNight}
-                />
-              ))
-            : listings &&
-              listings.map((listing) => (
-                <ListingLocationMarker
-                  key={listing._id}
-                  lat={listing.coords.lat}
-                  lng={listing.coords.lng}
-                  text={listing.pricePerNight}
-                />
-              ))}
-          {/* <AnyReactComponent lat={59.955413} lng={30.337844} text="My Marker" /> */}
-        </GoogleMapReact>
-      </MapContainer>
+      {mapCenter && mapZoom && (
+        <MapContainer>
+          <GoogleMapReact
+            bootstrapURLKeys={{
+              key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+            }}
+            defaultCenter={center}
+            defaultZoom={zoom}
+            center={mapCenter}
+            zoom={mapZoom}
+            onClick={_onClick}
+            onChange={_onBoundsChange}
+            // onDragEnd={_onDragEnd}
+            // onGoogleApiLoaded={_onGoogleApiLoaded}
+            options={createMapOptions}
+          >
+            {filtered_listings && filtered_listings.length !== 0
+              ? filtered_listings.map((listing) => (
+                  <ListingLocationMarker
+                    key={listing._id}
+                    lat={listing.coords.lat}
+                    lng={listing.coords.lng}
+                    text={listing.pricePerNight}
+                  />
+                ))
+              : listings &&
+                listings.map((listing) => (
+                  <ListingLocationMarker
+                    key={listing._id}
+                    lat={listing.coords.lat}
+                    lng={listing.coords.lng}
+                    text={listing.pricePerNight}
+                  />
+                ))}
+            {/* <AnyReactComponent lat={59.955413} lng={30.337844} text="My Marker" /> */}
+          </GoogleMapReact>
+        </MapContainer>
+      )}
     </div>
   );
 };
 
 MapSearch.defaultProps = {
-  center: {
-    lat: LatLngLocations.LasVegasStrip.lat,
-    lng: LatLngLocations.LasVegasStrip.lng,
-  },
-  zoom: 13,
+  center: LatLngLocations.newyork,
+  zoom: 5,
 };
 
 const mapStateToProps = ({ listing }) => ({

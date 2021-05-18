@@ -59,13 +59,15 @@ const autocompletedInput = {
 router.post("/", async (req, res) => {
   let flag = false;
   let attemp = 0;
+  var listingFound = null;
+  console.log("request body", req.body);
   try {
     while (attemp < 2 && !flag) {
       // find if there is any listings according to place_id searched in Db
-      let listingFound = await Listing.find({
+      listingFound = await Listing.find({
         "locationInfo.place_id": req.body.locationInfo.place_id,
       });
-      // console.log("listingFound", listingFound);
+      console.log("listingFound", listingFound);
 
       // if there are less than 2-5 listings for searched place_id
       // then Start scrape listing and pushing Scrapped listings to Db
@@ -77,15 +79,17 @@ router.post("/", async (req, res) => {
         // console.log(req.body);
         const Scrapper = new ListingScrapperTertiary("", req.body);
         const listings = await Scrapper.ScrapeHtml();
-        // console.log(listings);
+        console.log("Scrapped Listing", listings);
 
         // push scrapped listings to mongoDB
-        listings.map(async (item) => {
-          const newListing = new Listing({
-            ...item,
-          });
-          const listing = await newListing.save();
-        });
+        await Promise.all(
+          listings.map(async (item) => {
+            const newListing = new Listing({
+              ...item,
+            });
+            return await newListing.save();
+          })
+        );
         attemp++;
         continue;
       }
@@ -105,11 +109,11 @@ router.post("/", async (req, res) => {
       // console.log(listingFound[0], listingTwenty[0], newListingTwenty);
 
       // res send
-      res.send(newListingTwenty);
+      res.json(newListingTwenty);
     }
   } catch (err) {
     console.log(err);
-    res.send(err);
+    res.status(500).send(err);
   }
 });
 
@@ -145,6 +149,18 @@ router.post("/test", async (req, res) => {
   }
 });
 
+router.post("/test2", async (req, res) => {
+  try {
+    const foundListings = await Listing.find({
+      "locationInfo.place_id": req.body.locationInfo.place_id,
+    });
+    console.log(foundListings);
+    res.json(foundListings);
+  } catch (err) {
+    console.log(err.message);
+    res.send(err);
+  }
+});
 // model.find({
 //   '_id': { $in: [
 //       mongoose.Types.ObjectId('4ed3ede8844f0f351100000c'),

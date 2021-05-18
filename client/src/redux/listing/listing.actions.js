@@ -51,8 +51,9 @@ export const setListings = (requestBody) => async (dispatch) => {
       },
       body: JSON.stringify(requestBody),
     });
+    const data = await res.json();
 
-    dispatch({ type: SET_LISTINGS, payload: res.data });
+    dispatch({ type: SET_LISTINGS, payload: data });
 
     dispatch(toggleIsFetching());
   } catch (err) {

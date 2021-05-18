@@ -76,7 +76,8 @@ class ListingScrapper {
       info: "span._3hmsj",
       amenities: "div._kqh46o",
     },
-    pricePerNight: "span._olc9rf0",
+    pricePerNight:
+      "div._12oal24 > div._h34mg6 > div._ls0e43 > div > div._mjvmnj > div > span._155sga30",
     ratings: "span._10fy1f8",
     reviewNumber: "span._a7a5sx",
     // images: "._9ofhsl",
@@ -197,14 +198,6 @@ class ListingScrapper {
       const page = await browser.newPage();
       page.setViewport({ width: 1280, height: 800 });
 
-      // await page.setExtraHTTPHeaders({
-      //   "Proxy-Authorization": "Basic " + Buffer.from(":").toString("base64"),
-      // });
-      // curl "http://api.scraperapi.com?api_key=b226d918f5f63aacf9f310510bf0e19a&url=http://httpbin.org/ip"
-      // page.authenticate({ username: "user", password: "password" });
-
-      const pageUrl = `http://api.scraperapi.com?api_key=${process.env.SCRAPER_API_KEY}&url=${this.url}`;
-
       // waitForSelector ??
       await page.goto(this.url, { waitUntil: "networkidle0", timeout: 0 });
       // await page.goto(pageUrl, { waitUntil: "networkidle0" });
@@ -215,7 +208,7 @@ class ListingScrapper {
       await browser.close();
 
       // Clean up
-      await proxyChain.closeAnonymizedProxy(newProxyUrl, true);
+      // await proxyChain.closeAnonymizedProxy(newProxyUrl, true);
 
       return content;
     } catch (err) {
@@ -240,21 +233,13 @@ class ListingScrapper {
       // page.setViewport({ width: 1280, height: 800 });
 
       while (listingData.length === 0 || loadingAttempt < 2) {
-        // await page.goto(this.url, { waitUntil: "networkidle2" });
-        // await page.goto(this.url);
-        // page.waitForSelector("._8s3ctt a");
-        // page.waitForSelector("#data-state");
-
-        // const html = await page.content();
-        // var html = await page.evaluate(() => document.body.innerHTML);
-
         // get html file
-        // var html = await this.fetchHtml();
+        var html = await this.fetchHtml();
 
         // save html file to disk
-        // fs.writeFileSync("./html.html", html);
+        fs.writeFileSync("./html.html", html);
 
-        const html = fs.readFileSync("./html.html", "utf8");
+        // const html = fs.readFileSync("./html.html", "utf8");
 
         // load html with cheerio
         var $ = cheerio.load(html);
@@ -294,8 +279,8 @@ class ListingScrapper {
           getPathByKey(jsonData, "exploreV3")[0] + ".sections[0].items[*]"
         );
 
-        console.log("- listingData length ", listingData, listingData.length);
-        console.log("- listingData length ", listingData2, listingData2.length);
+        console.log("- listingData length ", listingData.length);
+        console.log("- listingData length ", listingData2.length);
 
         listingData = getListingData(listingData, listingData2);
         if (listingData[0].hasOwnProperty("place_id")) {
@@ -398,8 +383,8 @@ class ListingScrapper {
         });
       });
 
-      console.log("- loaded cheerio to scape individual listing detials");
-      // Start scrapping
+      console.log("- loaded cheerio to scape individual listing details");
+      // Start scrapping individual listings
       const listings = $(this.#Selectors.item);
       // console.log("- listings", listings);
 
@@ -489,7 +474,7 @@ class ListingScrapper {
 
   getImages = (picturesList) => {
     return picturesList.map((item) => {
-      console.log(item);
+      // console.log(item);
       return {
         id: item.id,
         picture: item.picture,
@@ -703,3 +688,4 @@ if (selector === '#foo') {
   // do something else
 }
 */
+// div._8s3ctt > div._12oal24 > div._h34mg6 > div._ls0e43 > div > div._mjvmnj > div > span._155sga30
