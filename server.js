@@ -13,6 +13,7 @@ const app = express();
 // Connect Db
 connectDB();
 // console.log(process.env);
+
 // Middlewares
 // app.use(express.urlencoded());
 app.use(cors());
