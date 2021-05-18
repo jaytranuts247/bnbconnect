@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+import { Link } from "react-router-dom";
 
 import { Wrapper } from "../../styles/Bases";
 import ImageSlider from "../ImageSlider.component";
@@ -25,10 +26,14 @@ const StayItem = ({ listing, idx }) => {
     pricePerNight,
     checkIn,
     checkOut,
+    _id,
   } = listing;
 
   return (
     <Wrapper className="bnb-listing-item">
+      <div className="link">
+        <Link to={`/listings/${_id}`}></Link>
+      </div>
       <ListingContainer>
         <div className="left-side">
           <div className="slider-container">

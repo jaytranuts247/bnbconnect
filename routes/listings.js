@@ -5,10 +5,11 @@ const puppeteer = require("puppeteer");
 const cheerio = require("cheerio");
 const fs = require("fs");
 const ListingScrapper = require("../modules/ListingScrapper_2");
+const ListingScrapperTertiary = require("../modules/ListingScrapper_3");
 const Listing = require("../model/listing");
-const listing = require("../model/listing");
 const { listIndexes } = require("../model/listing");
 const { addDates } = require("../utils/utils");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 // https://www.airbnb.com/s/Las-Vegas--NV--United-States/homes?tab_id=home_tab&refinement_paths%5B%5D=%2Fhomes&flexible_trip_dates%5B%5D=april&flexible_trip_dates%5B%5D=may&flexible_trip_lengths%5B%5D=weekend_trip&date_picker_type=calendar&checkin=2021-09-14&checkout=2021-09-22&adults=5&source=structured_search_input_header&search_type=autocomplete_click&place_id=ChIJ0X31pIK3voARo3mz1ebVzDo
 // https://www.airbnb.com/s/Las-Vegas--NV--United-States/homes?tab_id=home_tab&refinement_paths%5B%5D=%2Fhomes&flexible_trip_dates%5B%5D=april&flexible_trip_dates%5B%5D=may&flexible_trip_lengths%5B%5D=weekend_trip&date_picker_type=calendar&checkin=2021-09-14&checkout=2021-09-22&adults=5&source=structured_search_input_header&search_type=autocomplete_click&place_id=ChIJ0X31pIK3voARo3mz1ebVzDo
@@ -68,13 +69,13 @@ router.post("/", async (req, res) => {
 
       // if there are less than 2-5 listings for searched place_id
       // then Start scrape listing and pushing Scrapped listings to Db
-      if (listingFound.length <= 2) {
+      if (!listingFound || listingFound.length <= 2) {
         // Start Scrapping listings base on place_id
         console.log(
           `cannot found enough listings in DB with ${listingFound.length} listings. Start Scrapping listings From Airbnb`
         );
         // console.log(req.body);
-        const Scrapper = new ListingScrapper("", req.body);
+        const Scrapper = new ListingScrapperTertiary("", req.body);
         const listings = await Scrapper.ScrapeHtml();
         // console.log(listings);
 
@@ -111,5 +112,47 @@ router.post("/", async (req, res) => {
     res.send(err);
   }
 });
+
+router.get("/:listing_id", authMiddleware, async (req, res) => {
+  const { listing_id } = req.params;
+  try {
+    const foundListings = await Listing.findOne({
+      _id: listing_id,
+    });
+    console.log("foundListings", foundListings);
+    if (!foundListings)
+      return res
+        .status(404)
+        .json({ msg: `cannot found listing with id: ${listing_id}` });
+    res.json(foundListings);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send(err);
+  }
+});
+
+router.post("/test", async (req, res) => {
+  try {
+    const Scrapper = new ListingScrapperTertiary("", req.body);
+    const listings = await Scrapper.ScrapeHtml();
+    console.log(listings, listings.length);
+    if (listings.length < 20)
+      res.json({ msg: "cannot scrape listings as blocked from airbnb" });
+    res.json(listings);
+  } catch (err) {
+    console.log(err.message);
+    res.send(err);
+  }
+});
+
+// model.find({
+//   '_id': { $in: [
+//       mongoose.Types.ObjectId('4ed3ede8844f0f351100000c'),
+//       mongoose.Types.ObjectId('4ed3f117a844e0471100000d'),
+//       mongoose.Types.ObjectId('4ed3f18132f50c491100000e')
+//   ]}
+// }, function(err, docs){
+//    console.log(docs);
+// });
 
 module.exports = router;

@@ -62,6 +62,23 @@ function getPath(object, value) {
   }, []);
 }
 
+function getPathByKey(object, key) {
+  return Object.keys(object).reduce((r, k) => {
+    var kk = Array.isArray(object) ? `[${k}]` : `${k}`;
+    if (k === key) {
+      r.push(kk);
+    }
+    if (object[k] && typeof object[k] === "object") {
+      r.push(
+        ...getPathByKey(object[k], key).map(
+          (p) => kk + (p[0] === "[" ? "" : ".") + p
+        )
+      );
+    }
+    return r;
+  }, []);
+}
+
 const getRating = (s) => {
   const n = s.split(" ");
 };
@@ -72,6 +89,22 @@ const addDates = (listings, toBeAdded) => {
   });
 };
 
+const checkNull = (array) => {
+  let count = 0;
+  array.map((item) => {
+    if (!item[0]) {
+      console.log(item[1] + "is undefined");
+      count++;
+    }
+  });
+  if (count !== 0) console.log("There is no undefined Item found");
+};
+
+const getListingData = (firstListing, secondListing) => {
+  if (firstListing.length >= 20 - 1) return firstListing;
+  if (secondListing.length >= 20 - 1) return secondListing;
+};
+
 module.exports = {
   getLastWord,
   isFileExisted,
@@ -80,4 +113,7 @@ module.exports = {
   extractContent,
   getPath,
   addDates,
+  getPathByKey,
+  checkNull,
+  getListingData,
 };

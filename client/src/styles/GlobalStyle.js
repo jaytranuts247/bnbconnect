@@ -56,15 +56,15 @@ const GlobalStyle = createGlobalStyle`
     font-family: var(--font-sans);
 
     ${({ pathname }) =>
-			pathname === "/"
-				? css`
-						background: url("../../images/background-4.jpg") no-repeat center
-							center fixed;
-						background-size: cover;
-				  `
-				: css`
-						background: #fff;
-				  `};
+      pathname === "/home"
+        ? css`
+            background: url("../../images/background-4.jpg") no-repeat center
+              center fixed;
+            background-size: cover;
+          `
+        : css`
+            background: #fff;
+          `};
 
 
 

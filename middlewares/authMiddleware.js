@@ -4,6 +4,7 @@ const config = require("config");
 const authMiddleware = (req, res, next) => {
   // get token from header - added from setAuthToken from frontend
   const token = req.header("x-auth-token");
+
   if (!token)
     return res.status(401).json({ msg: "No token, authorization denied" });
 

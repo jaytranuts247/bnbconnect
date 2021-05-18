@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
 import { LatLngLocations } from "../../config";
-import ListingLocation from "../ListingLocation/ListingLocation.component";
+import ListingLocationMarker from "../ListingLocationMarker/ListingLocationMarker.component";
 import { filterOnMapChange } from "../../redux/listing/listing.actions";
 
 const MapContainer = styled.div`
@@ -95,7 +95,7 @@ const MapSearch = ({
         >
           {filtered_listings && filtered_listings.length !== 0
             ? filtered_listings.map((listing) => (
-                <ListingLocation
+                <ListingLocationMarker
                   key={listing._id}
                   lat={listing.coords.lat}
                   lng={listing.coords.lng}
@@ -104,7 +104,7 @@ const MapSearch = ({
               ))
             : listings &&
               listings.map((listing) => (
-                <ListingLocation
+                <ListingLocationMarker
                   key={listing._id}
                   lat={listing.coords.lat}
                   lng={listing.coords.lng}

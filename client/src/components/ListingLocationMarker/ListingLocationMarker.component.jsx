@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Wrapper } from "../../styles/Bases";
-import { Marker, StyledTagIcon } from "./ListingLocation.styles";
+import { Marker, StyledTagIcon } from "./ListingLocationMarker.styles";
 
-const ListingLocation = ({ lat, lng, text }) => {
+const ListingLocationMarker = ({ lat, lng, text }) => {
   const [clicked, setClicked] = useState(false);
 
   const handleClick = (event) => {
@@ -24,4 +24,4 @@ const ListingLocation = ({ lat, lng, text }) => {
   );
 };
 
-export default ListingLocation;
+export default ListingLocationMarker;

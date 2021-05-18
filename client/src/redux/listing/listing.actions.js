@@ -1,13 +1,41 @@
+import axios from "axios";
 import {
   SET_LISTINGS,
   TOGGLE_ISFETCHING,
   SET_FILTERED_LISTINGS,
+  SET_CURRENT_LISTING,
+  SET_ERROR_LISTING,
 } from "../types";
+
 import { filterListingInBound } from "../../utils/map_utils";
 
 const toggleIsFetching = () => ({
   type: TOGGLE_ISFETCHING,
 });
+
+export const loadCurrentListing = (listing_id) => async (dispatch) => {
+  try {
+    // set loading
+    dispatch(toggleIsFetching());
+
+    // start fetching
+    const res = await axios.get(`/api/listings/${listing_id}`);
+    console.log(res.data);
+    dispatch({
+      type: SET_CURRENT_LISTING,
+      payload: res.data,
+    });
+
+    // stop loading
+    dispatch(toggleIsFetching());
+  } catch (err) {
+    console.log(err.message);
+    dispatch({
+      type: SET_ERROR_LISTING,
+      payload: err.message,
+    });
+  }
+};
 
 // need to include the number of listings in request ??
 export const setListings = (requestBody) => async (dispatch) => {
@@ -16,23 +44,23 @@ export const setListings = (requestBody) => async (dispatch) => {
     console.log("set listings");
 
     dispatch(toggleIsFetching());
-    const res = await fetch("http://localhost:5000/api/listings", {
+    const res = await fetch("/api/listings", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
     });
-    const data = await res.json();
-    console.log(data);
 
-    if (data) {
-      dispatch({ type: SET_LISTINGS, payload: data });
-      // dispatch(toggleIsFetching());
-      dispatch(toggleIsFetching());
-    }
+    dispatch({ type: SET_LISTINGS, payload: res.data });
+
+    dispatch(toggleIsFetching());
   } catch (err) {
-    console.log(err);
+    console.log(err.message);
+    dispatch({
+      type: SET_ERROR_LISTING,
+      payload: err.message,
+    });
   }
 };
 
@@ -47,5 +75,9 @@ export const filterOnMapChange = (bounds, listings) => async (dispatch) => {
     dispatch({ type: SET_FILTERED_LISTINGS, payload: filtered });
   } catch (err) {
     console.log(err);
+    dispatch({
+      type: SET_ERROR_LISTING,
+      payload: err.message,
+    });
   }
 };

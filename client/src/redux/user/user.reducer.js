@@ -24,7 +24,7 @@ const userReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         isAuthenticated: true,
-        user: action.payload,
+        user: { ...action.payload },
       };
     case LOGIN_SUCCESS:
     case SIGNUP_SUCCESS:

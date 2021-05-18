@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { connect } from "react-redux";
 
 import { Container, StyledFilterButton } from "./SearchListing.styles";
@@ -22,14 +22,15 @@ const SearchListings = ({ listings, filtered_listings }) => {
       <div className="bnb-listing">
         {filtered_listings && filtered_listings.length !== 0
           ? filtered_listings.map((listing, idx) => (
-              <>
-                {listing && <StayItem key={idx} listing={listing} idx={idx} />}
-              </>
+              <Fragment key={idx}>
+                {listing && <StayItem listing={listing} idx={idx} />}
+              </Fragment>
             ))
-          : listings.map((listing, idx) => (
-              <>
-                {listing && <StayItem key={idx} listing={listing} idx={idx} />}
-              </>
+          : listings &&
+            listings.map((listing, idx) => (
+              <Fragment key={idx}>
+                {listing && <StayItem listing={listing} idx={idx} />}
+              </Fragment>
             ))}
       </div>
     </Container>

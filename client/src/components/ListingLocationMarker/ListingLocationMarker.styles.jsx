@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 import LoyaltyIcon from "@material-ui/icons/Loyalty";
 
 export const Marker = styled.div`
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;

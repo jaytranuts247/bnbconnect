@@ -20,7 +20,7 @@ const jwtSecret = config.get("jwtSecret");
 // @access   Public
 router.get("/", async (req, res) => {
   try {
-    const bookings = await Booking.find();
+    const bookings = await Booking.find({});
     if (bookings) res.json({ bookings });
   } catch (err) {
     console.log(err.message);
@@ -35,7 +35,7 @@ router.get("/:userId", authMiddleware, async (req, res) => {
   const userId = req.params.userId;
   try {
     const bookingList = await Booking.find({ guest_id: userId });
-    console.log(bookingList);
+    // console.log(bookingList);
     res.json(bookingList);
   } catch (err) {
     console.log(err.messasge);
@@ -58,18 +58,18 @@ router.post("/", authMiddleware, async (req, res) => {
 
     // check if booking existed in DB
     const overlappedBookingList = await Booking.find({
-      guest_id: req.body.guest_id,
+      listing_id: req.body.listing_id,
       $nor: [
         {
           $and: [
-            { startDate: { $lte: req.body.startDate } },
-            { endDate: { $lte: req.body.startDate } },
+            { checkIn: { $lt: req.body.checkIn } },
+            { checkOut: { $lt: req.body.checkOut } },
           ],
         },
         {
           $and: [
-            { startDate: { $gte: req.body.endDate } },
-            { endDate: { $gte: req.body.endDate } },
+            { checkIn: { $gt: req.body.checkIn } },
+            { checkOut: { $gt: req.body.checkOut } },
           ],
         },
       ],
@@ -83,9 +83,13 @@ router.post("/", authMiddleware, async (req, res) => {
 
     // if not, then save to DB
     const booking = await newBooking.save();
+    if (booking) {
+      console.log(booking);
+      console.log("successfully add new booking");
+    }
     res.json(booking);
   } catch (err) {
-    console.log(err.message);
+    console.log(err, err.message);
     res.send(err);
   }
 });
@@ -112,6 +116,18 @@ router.delete("/:bookingId", authMiddleware, async (req, res) => {
     const deletedBooking = await Booking.findOneAndDelete({ _id: bookingId });
     console.log(deletedBooking);
     res.json(deletedBooking);
+  } catch (err) {
+    console.log(err.message);
+    res.json(err.message);
+  }
+});
+
+router.delete("/", authMiddleware, async (req, res) => {
+  try {
+    const dbRes = await Booking.remove({});
+    console.log("Successfully remove all bookings");
+    console.log(dbRes);
+    res.json(dbres);
   } catch (err) {
     console.log(err.message);
     res.json(err.message);

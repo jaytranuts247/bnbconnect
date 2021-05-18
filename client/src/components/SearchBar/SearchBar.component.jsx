@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, forwardRef } from "react";
 import { connect } from "react-redux";
 import moment from "moment";
 
-import { DateRangePicker } from "react-date-range";
+import { DateRangePicker, DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 
@@ -38,7 +38,6 @@ import {
 
 import {
   TOGGLE_GUEST,
-  TOGGLE_DATE_PICKER,
   TOGGLE_LOCATION_SEARCH,
   RESET_TOGGLE,
   TOGGLE_CHECK_IN,
@@ -46,35 +45,35 @@ import {
   LOAD_RECOMMENDED_LOCATION_RESULTS,
 } from "../../redux/types";
 import { useHistory } from "react-router";
-import {
-  setListings,
-  toggleIsFetching,
-} from "../../redux/listing/listing.actions";
+import { setListings } from "../../redux/listing/listing.actions";
+import { useOnClickOutside } from "../../hooks/useOnClickOutside";
 
-const SearchBar = ({
-  startDate,
-  endDate,
-  adultsCount,
-  childrenCount,
-  infantsCount,
-  selectedLocation,
-  resetGuestsNumber,
-  RecommendedResults,
-  toggleGuest,
-  toggleLocationSearch,
-  toggleDatePick,
-  toggleCheckIn,
-  toggleCheckOut,
-  setToggleGuest,
-  setToggleDatePick,
-  setToggleLocationSearch,
-  setBookingDates,
-  setToggleCheckIn,
-  setToggleCheckOut,
-  resetToggle,
-  setRecommendedResults,
-  setListings,
-}) => {
+const SearchBar = forwardRef((props, ref) => {
+  const {
+    onSearch,
+    startDate,
+    endDate,
+    adultsCount,
+    childrenCount,
+    infantsCount,
+    selectedLocation,
+    resetGuestsNumber,
+    RecommendedResults,
+    toggleGuest,
+    toggleLocationSearch,
+    toggleDatePick,
+    toggleCheckIn,
+    toggleCheckOut,
+    setToggleGuest,
+    setToggleLocationSearch,
+    setBookingDates,
+    setToggleCheckIn,
+    setToggleCheckOut,
+    resetToggle,
+    setRecommendedResults,
+    setListings,
+    handleClickOnSearch,
+  } = props;
   const [locationInput, setLocationInput] = useState("");
 
   let history = useHistory();
@@ -83,13 +82,24 @@ const SearchBar = ({
   const inputRef = useRef();
   const datePickerRef = useRef();
   const locationRef = useRef();
-  const searchRef = useRef();
 
-  useOnClickOutsideDoubleRefs(guestRef, searchRef, () => resetToggle());
+  console.log("red", ref !== null);
+
+  useOnClickOutsideDoubleRefs(guestRef, ref, () => {
+    console.log("useOnClickOutsideDoubleRefs inside SearchBar guestRef,ref");
+    resetToggle();
+  });
+
+  useOnClickOutside(ref, () => {
+    if (onSearch === true && ref) {
+      console.log("ref");
+      if (handleClickOnSearch) handleClickOnSearch(false);
+    }
+  });
 
   const selectionRange = {
-    startDate: startDate === null ? new Date() : startDate,
-    endDate: endDate === null ? new Date() : endDate,
+    startDate: startDate === null ? new Date() : moment(startDate).toDate(),
+    endDate: endDate === null ? new Date() : moment(endDate).toDate(),
     key: "selection",
   };
 
@@ -115,7 +125,8 @@ const SearchBar = ({
         }
         setRecommendedResults(predictions);
       };
-      const autoCompleteService = new window.google.maps.places.AutocompleteService();
+      const autoCompleteService =
+        new window.google.maps.places.AutocompleteService();
 
       autoCompleteService.getPlacePredictions(
         { input: locationInput },
@@ -138,11 +149,6 @@ const SearchBar = ({
     if (toggleLocationSearch) inputRef.current.focus();
   }, [toggleLocationSearch]);
 
-  // useEffect(() => {
-  //   if (!RecommendedResults) return;
-  //   if (!toggleLocationSearch) setToggleLocationSearch(FORCETRUE);
-  // }, [RecommendedResults, locationInput]);
-
   const handleDatePick = (ranges) => {
     console.log(ranges);
     console.log(moment(ranges.selection.startDate).format("MMMM DD"));
@@ -163,6 +169,7 @@ const SearchBar = ({
     e.preventDefault();
     // setToggleGuest(DOTOGGLE);
     console.log("handleClickSearch");
+    setToggleGuest(false);
 
     // TODO: check if location is empty
     // * if empty, then focus input
@@ -178,7 +185,10 @@ const SearchBar = ({
     });
 
     // Link to search results Page
-    if (validateResult === validateTypes.OK) return redirectToSearch();
+    if (validateResult === validateTypes.OK) {
+      if (handleClickOnSearch) handleClickOnSearch(false);
+      return redirectToSearch();
+    }
     if (validateResult === validateTypes.LOCATION)
       return setToggleLocationSearch(FORCETRUE);
     if (validateResult === validateTypes.START_DATE) return setToggleCheckIn();
@@ -187,9 +197,9 @@ const SearchBar = ({
       return setToggleGuest(FORCETRUE); // always set to true
   };
 
-  const redirectToSearch = async () => {
+  const redirectToSearch = () => {
     console.log("redirectToSearch");
-    await fetchListing();
+    fetchListing();
     history.push("/search");
   };
 
@@ -214,8 +224,10 @@ const SearchBar = ({
   const handleInputChange = (e) => {
     if (e) e.preventDefault();
     setLocationInput(e.target.value);
-    if (!toggleLocationSearch && RecommendedResults)
+    if (!toggleLocationSearch && RecommendedResults) {
+      console.log("handle inputchange");
       setToggleLocationSearch(FORCETRUE);
+    }
   };
 
   const handleClickCheckIn = () => setToggleCheckIn();
@@ -233,7 +245,9 @@ const SearchBar = ({
         toggleGuest={toggleGuest}
         toggleCheckIn={toggleCheckIn}
         toggleCheckOut={toggleCheckOut}
-        ref={searchRef}
+        // ref={searchRef}
+        ref={ref}
+        onSearch={onSearch}
       >
         <form action="/search">
           <ul>
@@ -338,27 +352,39 @@ const SearchBar = ({
         </form>
 
         {toggleLocationSearch && (
-          <LocationSearchField handleClickLocation={handleClickLocation} />
+          <LocationSearchField
+            // toggleLocationSearch={toggleLocationSearch}
+            // setToggleLocationSearch={setToggleLocationSearch}
+            handleClickLocation={handleClickLocation}
+          />
         )}
 
-        {!toggleLocationSearch && toggleGuest && <GuestCount />}
+        {!toggleLocationSearch && toggleGuest && (
+          <GuestCount isBoxShadow={true} />
+        )}
 
         {(toggleCheckIn || toggleCheckOut) && (
-          <div className="day-picker">
-            <div className="day-picker-container" ref={datePickerRef}>
-              <DateRangePicker
+          <div className="date-picker">
+            <div className="date-picker-container" ref={datePickerRef}>
+              <DateRange
                 ranges={[selectionRange]}
                 onChange={handleDatePick}
+                months={2}
+                rangeColors="#f1f1f1"
+                color="#ff385ceb"
+                direction="horizontal"
+                showMonthAndYearPickers={false}
+                showSelectionPreview={true}
+                showPreview={false}
+                showDateDisplay={false}
               />
             </div>
           </div>
         )}
       </SearchBarContainer>
-      {/* <Calendar date={new Date()} />
-       */}
     </Wrapper>
   );
-};
+});
 
 const mapStateToProps = ({ booking }) => ({
   startDate: booking.startDate,
@@ -381,7 +407,6 @@ const mapDispatchToProps = (dispatch) => {
     resetGuestsNumber: () => dispatch(resetGuestsNumber()),
     setToggleGuest: (toggle) =>
       dispatch({ type: TOGGLE_GUEST, payload: toggle }),
-    setToggleDatePick: () => dispatch({ type: TOGGLE_DATE_PICKER }),
     setToggleLocationSearch: (toggle) =>
       dispatch({ type: TOGGLE_LOCATION_SEARCH, payload: toggle }),
     setToggleCheckIn: () => dispatch({ type: TOGGLE_CHECK_IN }),
@@ -396,4 +421,6 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);
+export default connect(mapStateToProps, mapDispatchToProps, null, {
+  forwardRef: true,
+})(SearchBar);

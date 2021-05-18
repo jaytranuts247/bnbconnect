@@ -12,6 +12,18 @@ const Schemas = {
     email: Joi.string().email().lowercase().required(),
     password: Joi.string(),
   }),
+  review: Joi.object({
+    listing_id: Joi.string().required(),
+    author_id: Joi.string().required(),
+    author_name: Joi.string(),
+    reviewContent: Joi.string(),
+    accuracy: Joi.number().min(1).max(5),
+    communication: Joi.number().min(1).max(5),
+    cleanliness: Joi.number().min(1).max(5),
+    location: Joi.number().min(1).max(5),
+    checkin: Joi.number().min(1).max(5),
+    value: Joi.number().min(1).max(5),
+  }),
 };
 
 module.exports = Schemas;

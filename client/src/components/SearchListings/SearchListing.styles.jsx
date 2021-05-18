@@ -40,6 +40,26 @@ export const Container = styled.div`
     display: flex;
     flex-direction: column;
 
+    .bnb-listing-item {
+      position: relative;
+      .link {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 15;
+        background: transparent;
+        height: 100%;
+        width: 100%;
+        cursor: pointer;
+
+        a {
+          display: flex;
+          height: 100%;
+          width: 100%;
+        }
+      }
+    }
+
     .bnb-listing-item:not(:last-child) {
       border-top: 1px solid #ebebeb;
     }
@@ -47,6 +67,7 @@ export const Container = styled.div`
     .bnb-listing__item {
       width: 100%;
       padding: 18px 0px;
+      position: relative;
     }
   }
 `;

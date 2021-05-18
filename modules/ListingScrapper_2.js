@@ -10,13 +10,48 @@ const {
   getStayName,
   extractContent,
   getPath,
+  checkNull,
 } = require("../utils/utils");
+const { JSONPath } = require("jsonpath-plus");
 
 class ListingScrapper {
   requestInput = {};
   url = "";
   scrappedListings = [];
   // browser;
+
+  #toScrapped = {
+    city: {
+      name: "city",
+      path: "$..city",
+      value: null,
+    },
+    avgRating: {
+      name: "avgRating",
+      path: "$..avgRating",
+      value: null,
+    },
+    previewAmenityNames: {
+      name: "previewAmenityNames",
+      path: "$..previewAmenityNames",
+      value: null,
+    },
+    roomAndPropertyType: {
+      name: "roomAndPropertyType",
+      path: "$..roomAndPropertyType",
+      value: null,
+    },
+    user: {
+      name: "user",
+      path: "$..user",
+      value: null,
+    },
+    publicAddress: {
+      name: "publicAddress",
+      path: "$..publicAddress",
+      value: null,
+    },
+  };
 
   #Selectors = {
     item: "._8s3ctt",
@@ -130,7 +165,7 @@ class ListingScrapper {
       const page = await browser.newPage();
       page.setViewport({ width: 1280, height: 800 });
       // waitForSelector ??
-      await page.goto(this.url, { waitUntil: "networkidle2" });
+      await page.goto(this.url, { waitUntil: "networkidle0" });
       // const content = await page.content();
       const content = await page.evaluate(() => document.body.innerHTML);
 
@@ -170,7 +205,7 @@ class ListingScrapper {
         var html = await this.fetchHtml();
 
         // save html file to disk
-        fs.writeFileSync("./test.html", html);
+        // fs.writeFileSync("./test.html", html);
 
         // load html with cheerio
         var $ = cheerio.load(html);
@@ -179,8 +214,17 @@ class ListingScrapper {
         var dataRes = $("#data-state").html();
         fs.writeFileSync("./datares.txt", dataRes);
 
-        var jsonData = await JSON.parse(dataRes);
-        // fs.writeFileSync("./jsonData.js", jsonData);
+        console.log("JSON parse jsonData");
+        var jsonData = JSON.parse(dataRes);
+        fs.writeFileSync("./jsonData.js", JSON.stringify(jsonData));
+
+        // loading toScrapped data
+        for (let [key, item] of Object.entries(this.#toScrapped)) {
+          console.log("scapped Item: " + item.name);
+          item.value = [...JSONPath({ path: item.path, json: jsonData })];
+          console.log(item.value);
+        }
+
         console.log(loadingAttempt + " attempt");
 
         if (
@@ -189,6 +233,7 @@ class ListingScrapper {
           jsonData.niobeMinimalClientData[1] &&
           jsonData.niobeMinimalClientData[1][1]
         ) {
+          console.log("pick listingData from first selection");
           listingData =
             jsonData.niobeMinimalClientData[1][1].data.dora.exploreV3
               .sections[0].items;
@@ -201,6 +246,7 @@ class ListingScrapper {
           jsonData.niobeApolloClientData.__niobe_denormalized.queries[0] &&
           jsonData.niobeApolloClientData.__niobe_denormalized.queries[0][1]
         ) {
+          console.log("pick listingData from second selection");
           listingData =
             jsonData.niobeApolloClientData.__niobe_denormalized.queries[0][1]
               .dora.exploreV3.sections[0].items;
@@ -255,9 +301,10 @@ class ListingScrapper {
       fs.writeFileSync("./listingData.txt", JSON.stringify(listingData));
 
       // get LatLng
+      console.log("scrap listingData");
       listingData.map((item, idx) => {
         const {
-          city,
+          // city,
           avgRating,
           contextualPictures,
           kickerContent,
@@ -269,6 +316,21 @@ class ListingScrapper {
           publicAddress,
         } = item.listing;
         const { pricingQuote } = item;
+
+        checkNull([
+          [item.listing.city, "city"],
+          [item.listing.avgRating, "avgRating"],
+          [item.listing.contextualPictures, "contextualPictures"],
+          [item.listing.kickerContent, "kickerContent"],
+          [item.listing.lat, "lat"],
+          [item.listing.lng, "lng"],
+          [item.listing.previewAmenityNames, "previewAmenityNames"],
+          [item.listing.roomAndPropertyType, "roomAndPropertyType"],
+          [item.listing.user, "user"],
+          [item.listing.publicAddress, "publicAddress"],
+          [item.listing.pricingQuote, "pricingQuote"],
+        ]);
+
         // console.log("pricingQuote", pricingQuote);
         this.scrappedListings.push({
           locationInfo: {
@@ -279,28 +341,32 @@ class ListingScrapper {
             lat,
             lng,
           },
-          city,
-          avgRating,
+          city: city ? city : this.requestInput.locationInfo.description,
+          avgRating: avgRating || 0,
           kickerContent: kickerContent.messages[0],
           previewAmenityNames,
-          roomAndPropertyType,
-          publicAddress,
+          roomAndPropertyType: roomAndPropertyType ? roomAndPropertyType : "",
+          publicAddress: publicAddress ? publicAddress : "",
           user: {
-            id: user.id,
-            pictureUrl: user.pictureUrl,
-            thumbnailUrl: user.thumbnailUrl,
+            id: user ? user.id : "",
+            pictureUrl: user ? user.pictureUrl : "",
+            thumbnailUrl: user ? user.thumbnailUrl : "",
           },
           images: this.getImages(contextualPictures),
-          serviceFee: this.getPriceQuote(
-            pricingQuote.structuredStayDisplayPrice.explanationData
-              .priceDetails[0].items,
-            "Service fee"
-          ),
-          cleaningFee: this.getPriceQuote(
-            pricingQuote.structuredStayDisplayPrice.explanationData
-              .priceDetails[0].items,
-            "Cleaning fee"
-          ),
+          serviceFee: pricingQuote.structuredStayDisplayPrice.explanationData
+            ? this.getPriceQuote(
+                pricingQuote?.structuredStayDisplayPrice?.explanationData
+                  .priceDetails[0].items,
+                "Service fee"
+              )
+            : "",
+          cleaningFee: pricingQuote.structuredStayDisplayPrice.explanationData
+            ? this.getPriceQuote(
+                pricingQuote?.structuredStayDisplayPrice?.explanationData
+                  .priceDetails[0].items,
+                "Cleaning fee"
+              )
+            : "",
         });
       });
 
@@ -309,6 +375,7 @@ class ListingScrapper {
       const listings = $(this.#Selectors.item);
       // console.log("listings", listings);
 
+      console.log("--> scrap listing detials");
       listings.each((idx, listing) => {
         let previewInfo = [],
           amenities = [];
@@ -393,10 +460,13 @@ class ListingScrapper {
   };
 
   getImages = (picturesList) => {
-    return picturesList.map((item) => ({
-      id: item.id,
-      picture: item.picture,
-    }));
+    return picturesList.map((item) => {
+      console.log(item);
+      return {
+        id: item.id,
+        picture: item.picture,
+      };
+    });
   };
 }
 

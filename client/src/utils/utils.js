@@ -1,6 +1,6 @@
 import moment from "moment";
 
-export const DOTOGGLE = false;
+export const DOTOGGLE = "DOTOGGLE";
 export const FORCETRUE = true;
 
 export const LOGIN = "LOGIN";
@@ -46,7 +46,7 @@ export const demoLocationSearchResults = [
 
 export const dateDisplay = (date) => moment(date).format("MMMM DD");
 
-export const guestDisplay = (adultsCount, childrenCount, infantsCount) => {
+export const guestDisplay = (adultsCount, childrenCount, infantsCount = 0) => {
   if (adultsCount + childrenCount + infantsCount === 0) {
     return "Add Guests";
   }
@@ -100,3 +100,21 @@ export const getPriceNum = (string) => {
 
 export const getTotalPrice = (pricePerNight, dayRange) =>
   pricePerNight * dayRange;
+
+export const unitDisplay = (itemNumber, unit) => {
+  return itemNumber >= 1 ? unit + "s" : unit;
+};
+
+export const onlyUnique = (array, key) => {
+  let mymap = new Map();
+
+  let unique = array.filter((obj) => {
+    if (!mymap.has(obj[key])) {
+      mymap.set(obj[key], true);
+      return true;
+    }
+    return false;
+  });
+
+  return unique;
+};
