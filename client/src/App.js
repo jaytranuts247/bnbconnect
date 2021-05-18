@@ -116,19 +116,3 @@ const mapStateToProps = ({ listing }) => ({
 });
 
 export default connect(mapStateToProps)(App);
-
-/*
- * search on map
- * - filter new listings onMapDrag
- *   - send request to server to get more listings if place_id is different
- * - debounce search - limit search ----> OK
- * - check for duplicate before write to DB
- * - make dummmy reviews
- * - scrape with pagination -> 100 listings ???
- * - Map
- *   - show popup once click to item on map
- *   - calculate the location to show on map (get map width and height, location of the price tag)
- * - review:
- *   - set error
- *   - add joi on backend
- */

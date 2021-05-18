@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import moment from "moment";
 import { connect } from "react-redux";
 import { motion } from "framer-motion";
@@ -170,7 +170,7 @@ const Header = ({
                         <StyledButtonCircle
                           type="button"
                           size={32}
-                          onClick={handleClickSearch}
+                          // onClick={handleClickOnSearch}
                         >
                           <StyledSearchIcon />
                         </StyledButtonCircle>
