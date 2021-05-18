@@ -372,14 +372,20 @@ class ListingScrapper {
                   .priceDetails[0].items,
                 "Service fee"
               )
-            : "$0",
+            : {
+                description: "Service fee",
+                priceString: "$0",
+              },
           cleaningFee: pricingQuote.structuredStayDisplayPrice.explanationData
             ? this.getPriceQuote(
                 pricingQuote?.structuredStayDisplayPrice?.explanationData
                   .priceDetails[0].items,
                 "Cleaning fee"
               )
-            : "$0",
+            : {
+                description: "Cleaning fee",
+                priceString: "$0",
+              },
         });
       });
 

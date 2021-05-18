@@ -16,7 +16,7 @@ export const foundReview = (arr, key, value) => {
 
 export const getAvgRatings = (reviews, listing_id) => {
   const initialRating = {
-    accuracy: 1,
+    accuracy: 5,
     communication: 5,
     cleanliness: 5,
     location: 5,

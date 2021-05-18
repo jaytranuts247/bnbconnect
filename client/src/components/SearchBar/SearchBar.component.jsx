@@ -83,20 +83,25 @@ const SearchBar = forwardRef((props, ref) => {
   const datePickerRef = useRef();
   const locationRef = useRef();
 
-  console.log("red", ref !== null);
+  const searchBarRef = useRef();
 
-  useOnClickOutsideDoubleRefs(guestRef, ref, () => {
-    console.log("useOnClickOutsideDoubleRefs inside SearchBar guestRef,ref");
+  console.log("ref in searchBar", ref !== null);
+
+  // useOnClickOutsideDoubleRefs(guestRef, ref, () => {
+  //   console.log("useOnClickOutsideDoubleRefs inside SearchBar guestRef,ref");
+  //   resetToggle();
+  // });
+
+  // useOnClickOutside(ref, () => {
+  //   if (onSearch === true && ref && handleClickOnSearch) {
+  //     console.log("ref", ref);
+  //     handleClickOnSearch(false);
+  //   }
+  // });
+  useOnClickOutside(searchBarRef, () => {
     resetToggle();
+    if (onSearch) handleClickOnSearch();
   });
-
-  useOnClickOutside(ref, () => {
-    if (onSearch === true && ref) {
-      console.log("ref");
-      if (handleClickOnSearch) handleClickOnSearch(false);
-    }
-  });
-
   const selectionRange = {
     startDate: startDate === null ? new Date() : moment(startDate).toDate(),
     endDate: endDate === null ? new Date() : moment(endDate).toDate(),
@@ -246,7 +251,8 @@ const SearchBar = forwardRef((props, ref) => {
         toggleCheckIn={toggleCheckIn}
         toggleCheckOut={toggleCheckOut}
         // ref={searchRef}
-        ref={ref}
+        // ref={ref}
+        ref={searchBarRef}
         onSearch={onSearch}
       >
         <form action="/search">

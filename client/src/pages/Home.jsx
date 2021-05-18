@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 
 import SearchBar from "../components/SearchBar/SearchBar.component";
 import styled from "styled-components";
@@ -9,10 +9,9 @@ const Wrapper = styled.div`
 `;
 
 const Home = () => {
-  const searchBarRef = useRef();
   return (
     <Wrapper>
-      <SearchBar ref={searchBarRef} />
+      <SearchBar />
     </Wrapper>
   );
 };

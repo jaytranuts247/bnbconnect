@@ -26,6 +26,11 @@ const MapListing = ({ center, zoom, listing }) => {
         //   stylers: [{ color: "#c5c5c5" }],
         // },
         {
+          featureType: "transit.station",
+          elementType: "labels",
+          stylers: [{ color: "#b0b0b0" }],
+        },
+        {
           featureType: "road.highway",
           elementType: "geometry",
           stylers: [{ color: "#dddddd" }],

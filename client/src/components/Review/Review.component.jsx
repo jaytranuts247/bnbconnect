@@ -37,7 +37,6 @@ const Review = ({
   isReviewed,
   currentReview,
   handleChange,
-
   updateReview,
   createReview,
   clearCurrentReview,

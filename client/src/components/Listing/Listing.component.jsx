@@ -459,18 +459,26 @@ const Listing = ({
                   </div>
                   <div className="service-fee">
                     <div className="service-fee__details">
-                      {currentListing.cleaningFee.description}
+                      {currentListing.cleaningFee
+                        ? currentListing.cleaningFee.description
+                        : "Cleaning fee"}
                     </div>
                     <div className="service-fee__price">
-                      {currentListing.cleaningFee.priceString}
+                      {currentListing.cleaningFee
+                        ? currentListing.cleaningFee.priceString
+                        : "$0"}
                     </div>
                   </div>
                   <div className="service-fee">
                     <div className="service-fee__details">
-                      {currentListing.serviceFee.description}
+                      {currentListing.serviceFee
+                        ? currentListing.serviceFee.description
+                        : "Service fee"}
                     </div>
                     <div className="service-fee__price">
-                      {currentListing.serviceFee.priceString}
+                      {currentListing.serviceFee
+                        ? currentListing.serviceFee.priceString
+                        : "$0"}
                     </div>
                   </div>
                   <LineSeperator borderColor="#ebebeb" />
@@ -480,8 +488,12 @@ const Listing = ({
                       $
                       {getPriceNum(currentListing.pricePerNight) *
                         calcDayDiff(moment(startDate), moment(endDate)) +
-                        getPriceNum(currentListing.cleaningFee.priceString) +
-                        getPriceNum(currentListing.serviceFee.priceString) || 0}
+                        (currentListing.cleaningFee
+                          ? getPriceNum(currentListing.cleaningFee.priceString)
+                          : 0) +
+                        (currentListing.serviceFee
+                          ? getPriceNum(currentListing.serviceFee.priceString)
+                          : 0) || 0}
                     </div>
                   </div>
                 </div>
@@ -559,9 +571,8 @@ const Listing = ({
                 {reviews &&
                   Object.entries(getAvgRatings(reviews, listing_id)).map(
                     ([type, rating]) => {
-                      console.log(type, rating);
                       return (
-                        <div className="review-item">
+                        <div key={type} className="review-item">
                           <div className="review-item__type">
                             {_.upperFirst(type)}
                           </div>

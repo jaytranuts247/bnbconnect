@@ -94,6 +94,7 @@ export const calcDayDiff = (
 };
 
 export const getPriceNum = (string) => {
+  if (!string) return 0;
   const n = string.match(/(\d+)/);
   return parseInt(n[0]);
 };

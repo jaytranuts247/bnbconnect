@@ -10,7 +10,6 @@ import {
   StyledMenuIcon,
   StyledSearchIcon,
   Seperator,
-  ModalBackground,
   SearchBarContainer,
 } from "./Header.styles";
 
@@ -21,16 +20,14 @@ import {
   LOGIN,
   SIGNUP,
 } from "../../utils/utils";
-// import { useOnClickOutsideDoubleRefs } from "../../hooks/useOnClickOutsideDoubleRef";
-import Login from "../Login/Login.component";
-import SignUp from "../SignUp/SignUp.component";
+
 import SearchBar from "../SearchBar/SearchBar.component";
 import AccountCircleRoundedIcon from "@material-ui/icons/AccountCircleRounded";
 import { loadUser, LogOutUser } from "../../redux/user/user.actions";
 import { useOnClickOutside } from "../../hooks/useOnClickOutside";
 import { useHistory } from "react-router";
 import { AnimateSharedLayout } from "framer-motion";
-import { useOnClickOutsideDoubleRefs } from "../../hooks/useOnClickOutsideDoubleRef";
+
 import { useLocation } from "react-router-dom";
 import { matchPathname } from "../../utils/header_utils";
 
@@ -64,7 +61,7 @@ const Header = ({
   setLoginSignUp,
 }) => {
   const [menuToggle, setMenuToggle] = useState(false);
-  // const [loginSignUp, setLoginSignUp] = useState("");
+
   const [onSearch, setOnSearch] = useState(false);
 
   let history = useHistory();
@@ -74,49 +71,38 @@ const Header = ({
   const profileRef = useRef();
   const betweenBarRef = useRef();
 
-  // useOnClickOutsideDoubleRefs(menuRef, profileRef, () => {
-  //   setMenuToggle(false);
-  // });
-
   const isListingPath = matchPathname(location.pathname, /(\/listings\/)\w+/g);
   const isSearchPath = location.pathname === "/search";
 
   useOnClickOutside(profileRef, () => setMenuToggle(false));
 
-  useEffect(() => {
-    let validateResult = validateBookingInfo({
-      startDate,
-      endDate,
-      adultsNum: adultsCount,
-      childrenNum: childrenCount,
-      infantsNum: infantsCount,
-      selectedLocation,
-    });
-    console.log(moment(startDate).format("MMMM DD"));
-    //if (validateResult !== validateTypes.OK) return history.push("/"); // enable later
-    // eslint-disable-next-line
-  }, []);
+  // useEffect(() => {
+  //   let validateResult = validateBookingInfo({
+  //     startDate,
+  //     endDate,
+  //     adultsNum: adultsCount,
+  //     childrenNum: childrenCount,
+  //     infantsNum: infantsCount,
+  //     selectedLocation,
+  //   });
+  //   console.log(moment(startDate).format("MMMM DD"));
+  //   //if (validateResult !== validateTypes.OK) return history.push("/"); // enable later
+  //   // eslint-disable-next-line
+  // }, []);
 
   const handleClickLogin = () => {
     if (localStorage.token) return loadUser();
     setLoginSignUp(LOGIN);
   };
+
   const handleClickSignUp = () => {
     setLoginSignUp(SIGNUP);
   };
-  // const handleClickHeaderSearch = () => {
-  //   toggleSearchBar((prev) => !prev);
-  // };
+
   const handleClickOnSearch = () => {
     console.log("handle click onsearch");
     setOnSearch((prev) => !prev);
   };
-
-  // const handleClickModal = () => {
-  //   // dupicate with click on login and signup
-  //   console.log("handleClickModal");
-  //   setLoginSignUp("");
-  // };
 
   const handleClickBooking = () => history.push("/bookings"); // push to /:id/booking
   const handleClickProfile = () => history.push("/profile"); // push to /profile/:id

@@ -31,6 +31,7 @@ export const HeaderContainer = styled(motion.div)`
           background: transparent !important;
         `
       : css`
+          background: #ffffff !important;
           border-bottom: 1px solid #ebebeb;
           box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
         `};

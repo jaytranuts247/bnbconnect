@@ -8,6 +8,7 @@ import userReducer from "./user/user.reducer";
 import alertReducer from "./alert/alert.reducer";
 import userBookingReducer from "./user_booking/user_booking.reducer";
 import reviewReducer from "./review/review.reducer";
+import profileReducer from "./profile/profile.reducer";
 
 const persistConfig = {
   key: "root",
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   review: reviewReducer,
   listing: listingReducer,
   alert: alertReducer,
+  profile: profileReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

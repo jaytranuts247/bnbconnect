@@ -9,7 +9,6 @@ import GlobalStyle from "./styles/GlobalStyle";
 import Home from "./pages/Home";
 import SearchPage from "./pages/SearchPage";
 import setAuthToken from "./utils/setAuthToken";
-import Loading from "./components/Loading.component";
 import Profile from "./pages/Profile/Profile.component";
 import Listing from "./components/Listing/Listing.component";
 import Booking from "./pages/Booking/Booking.component";
@@ -59,9 +58,9 @@ function App({ isFetching }) {
   const [loginSignUp, setLoginSignUp] = useState("");
 
   let location = useLocation();
-  const isHome = location.pathname === "/" || "/home" ? 1 : 0;
+  const isHome =
+    location.pathname === "/" || location.pathname === "/home" ? 1 : 0;
   const isSearchRoute = location.pathname === "/search" ? 1 : 0;
-  console.log(location);
 
   return (
     <div className="app">

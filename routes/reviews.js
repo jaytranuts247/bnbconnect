@@ -15,14 +15,48 @@ const Review = require("../model/Review");
 
 const jwtSecret = config.get("jwtSecret");
 
+const defaultReviews = [
+  "This is dummy reviews.",
+  "You can add review to listings",
+];
+
 // @router   GET reviews
 // @desc     get all reviews of current listing
 // @access   Public
-router.get("/:listingId", async (req, res) => {
-  const { listingId } = req.params;
+router.get("/:listing_id", async (req, res) => {
+  const { listing_id } = req.params;
 
   try {
-    const reviews = await Review.find({ listing_id: listingId });
+    var reviews = await Review.find({ listing_id });
+
+    // add two reviews to db
+    if (reviews.length === 0) {
+      const newReviews = defaultReviews.map((item) => ({
+        listing_id,
+        author_id: "609052677bced9a9f7009918",
+        author_name: "Jay Tran",
+        reviewContent: item,
+        accuracy: 5,
+        communication: 5,
+        cleanliness: 5,
+        location: 5,
+        checkin: 5,
+        value: 5,
+      }));
+
+      await Promise.all(
+        newReviews.map(async (review) => {
+          let newReview = new Review({
+            ...review,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+          return await newReview.save();
+        })
+      );
+
+      reviews = await Review.find({ listing_id });
+    }
     res.json(reviews);
   } catch (err) {
     console.log(err.message);
@@ -33,12 +67,12 @@ router.get("/:listingId", async (req, res) => {
 // @router   GET reviews
 // @desc     get specific review
 // @access   Public
-router.get("/:listingId/:userId", async (req, res) => {
-  const { listingId, userId } = req.params;
+router.get("/:listing_id/:user_id", async (req, res) => {
+  const { listing_id, user_id } = req.params;
   try {
     const review = await Review.findOne({
-      listing_id: listingId,
-      author_id: userId,
+      listing_id,
+      author_id: user_id,
     });
     res.json(review);
   } catch (err) {
@@ -58,8 +92,8 @@ router.post(
     try {
       //check for review is already existed
       let reviewExisted = await Review.findOne({
-        listing_id: listing_id,
-        author_id: author_id,
+        listing_id,
+        author_id,
       });
 
       console.log(reviewExisted);
