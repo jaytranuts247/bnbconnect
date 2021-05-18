@@ -6,8 +6,8 @@ const cheerio = require("cheerio");
 const fs = require("fs");
 const ListingScrapper = require("../modules/ListingScrapper_2");
 const ListingScrapperTertiary = require("../modules/ListingScrapper_3");
-const Listing = require("../model/listing");
-const { listIndexes } = require("../model/listing");
+const Listing = require("../model/Listing");
+
 const { addDates } = require("../utils/utils");
 const authMiddleware = require("../middlewares/authMiddleware");
 
