@@ -188,10 +188,11 @@ class ListingScrapper {
       // console.log(newProxyUrl);
 
       browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         // args: [`--proxy-server=${newProxyUrl}`],
         // args: ["--no-sandbox", `--proxy-server=${proxy1.host}:${proxy1.port}`],
         ignoreHTTPSErrors: true,
+        args: ["--no-sandbox"], // include this for heroku buildpack
         // args: ["–proxy-server=zproxy.lum-superproxy.io:22225"],
         // args: ["--proxy-server=http://198.199.86.11:8080"],
       });

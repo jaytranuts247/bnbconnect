@@ -40,6 +40,7 @@ const loadingCircleVariants = {
 const loadingCircleTransition = {
   duration: 0.5,
   repeat: Infinity,
+  repeatType: "loop",
   ease: "easeInOut",
 };
 
