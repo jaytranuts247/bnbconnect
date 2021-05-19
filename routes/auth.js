@@ -10,7 +10,10 @@ const config = require("config");
 
 const Schemas = require("../middlewares/Schemas");
 const User = require("../model/User");
-const jwtSecret = config.get("jwtSecret");
+const jwtSecret =
+  process.env.NODE_ENV !== "production"
+    ? config.get("jwtSecret")
+    : process.env.SECRET;
 
 // @router   GET api/auth
 // @desc     get logged-in user

@@ -10,7 +10,10 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 
 const User = require("../model/User");
-const jwtSecret = config.get("jwtSecret");
+const jwtSecret =
+  process.env.NODE_ENV !== "production"
+    ? config.get("jwtSecret")
+    : process.env.SECRET;
 
 // @router   POST api/users
 // @desc     Register a user

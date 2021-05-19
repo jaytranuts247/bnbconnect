@@ -25,6 +25,9 @@ client/build
 /client/.env.test.local
 /client/.env.production.local
 
+/client/config/default.json
+/client/config/production.json
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -38,3 +41,6 @@ listingData.txt
 note.js
 
 scrapSteam.js
+
+# Local Netlify folder
+.netlify

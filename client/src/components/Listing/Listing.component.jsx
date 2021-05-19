@@ -253,10 +253,12 @@ const Listing = ({
           <ImagePreviewSection>
             <div className="image-preview-container">
               <div className="column primary-column">
-                <img
-                  src={currentListing.images[0].picture}
-                  alt="listing-preview"
-                />
+                {currentListing.images && (
+                  <img
+                    src={currentListing.images[0].picture}
+                    alt="listing-preview"
+                  />
+                )}
               </div>
               <div className=" column secondary-column">
                 <div className="sub-column">

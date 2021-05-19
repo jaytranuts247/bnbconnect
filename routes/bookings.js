@@ -13,8 +13,6 @@ const config = require("config");
 const Schemas = require("../middlewares/Schemas");
 const Booking = require("../model/Booking");
 
-const jwtSecret = config.get("jwtSecret");
-
 // @router   GET bookings
 // @desc     get all bookings
 // @access   Public

@@ -13,8 +13,6 @@ const config = require("config");
 const Schemas = require("../middlewares/Schemas");
 const Review = require("../model/Review");
 
-const jwtSecret = config.get("jwtSecret");
-
 const defaultReviews = [
   "This is dummy reviews.",
   "You can add review to listings",
