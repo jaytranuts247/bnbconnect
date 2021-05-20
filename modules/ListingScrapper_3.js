@@ -2,7 +2,7 @@ const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
 const proxyChain = require("proxy-chain");
 const getFreeProxies = require("get-free-https-proxy");
-
+const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
@@ -235,7 +235,10 @@ class ListingScrapper {
 
       while (listingData.length === 0 || loadingAttempt < 2) {
         // get html file
-        var html = await this.fetchHtml();
+        // var html = await this.fetchHtml();
+        var html = await axios.get(
+          `https://airbnb-scrapper.herokuapp.com/scrape?url=${this.url}`
+        );
 
         // save html file to disk
         fs.writeFileSync("./html.html", html);

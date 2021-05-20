@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const axios = require("axios");
-const puppeteer = require("puppeteer");
-const cheerio = require("cheerio");
-const fs = require("fs");
-const ListingScrapper = require("../modules/ListingScrapper_2");
+// const axios = require("axios");
+// const puppeteer = require("puppeteer");
+// const cheerio = require("cheerio");
+// const fs = require("fs");
+// const ListingScrapper = require("../modules/ListingScrapper_2");
 const ListingScrapperTertiary = require("../modules/ListingScrapper_3");
 const Listing = require("../model/Listing");
 
@@ -72,6 +72,10 @@ router.post("/", async (req, res) => {
       // if there are less than 2-5 listings for searched place_id
       // then Start scrape listing and pushing Scrapped listings to Db
       if (!listingFound || listingFound.length <= 2) {
+        // stop and retrun status when dont have any listing in DB
+        return res
+          .status(400)
+          .json({ msg: "cannot find any listing according to your search" });
         // Start Scrapping listings base on place_id
         console.log(
           `cannot found enough listings in DB with ${listingFound.length} listings. Start Scrapping listings From Airbnb`
