@@ -13,6 +13,6 @@ note.js
 
 /testFile
 /.netlify
-/client
+
 
 netlify.toml
