@@ -58,7 +58,7 @@ const SearchBar = forwardRef((props, ref) => {
     infantsCount,
     selectedLocation,
     resetGuestsNumber,
-    RecommendedResults,
+    recommendedResults,
     toggleGuest,
     toggleLocationSearch,
     toggleDatePick,
@@ -229,8 +229,8 @@ const SearchBar = forwardRef((props, ref) => {
   const handleInputChange = (e) => {
     if (e) e.preventDefault();
     setLocationInput(e.target.value);
-    if (!toggleLocationSearch && RecommendedResults) {
-      console.log("handle inputchange");
+    if (!toggleLocationSearch && recommendedResults) {
+      // console.log("handle inputchange");
       setToggleLocationSearch(FORCETRUE);
     }
   };
@@ -404,7 +404,7 @@ const mapStateToProps = ({ booking }) => ({
   toggleDatePick: booking.toggleDatePick,
   toggleCheckIn: booking.toggleCheckIn,
   toggleCheckOut: booking.toggleCheckOut,
-  RecommendedResults: booking.RecommendedResults,
+  recommendedResults: booking.recommendedResults,
 });
 
 const mapDispatchToProps = (dispatch) => {

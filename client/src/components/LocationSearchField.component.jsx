@@ -13,8 +13,6 @@ import {
   TOGGLE_CHECK_OUT,
 } from "../redux/types";
 
-import { useHistory } from "react-router";
-
 const Wrapper = styled.div`
   display: flex;
 `;
