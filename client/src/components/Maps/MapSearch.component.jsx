@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import GoogleMapReact from "google-map-react";
+import GoogleMapReact, { fitBounds } from "google-map-react";
 import { LatLngLocations } from "../../config";
 import ListingLocationMarker from "../ListingLocationMarker/ListingLocationMarker.component";
 import { filterOnMapChange } from "../../redux/listing/listing.actions";
@@ -22,10 +22,14 @@ const MapSearch = ({
 }) => {
   const [mapCenter, setMapCenter] = useState(center);
   const [mapZoom, setMapZoom] = useState(zoom);
+  const [bounds, setBounds] = useState(null);
+
   const _onBoundsChange = ({ bounds }) => {
     // console.log({ center, zoom, bounds, marginBounds }, center);
     // console.log("update listings", bounds);
+    console.log("_onBoundsChange");
     filterOnMapChange(bounds, listings);
+    setBounds(bounds);
   };
 
   const _onClick = ({ x, y, lat, lng, event }) =>
@@ -36,9 +40,11 @@ const MapSearch = ({
   //   return;
   // };
 
-  // const _onGoogleApiLoaded = ({ map, maps }) => {
-  //   // console.log( maps);
-  // };
+  const _onGoogleApiLoaded = ({ map, maps }) => {
+    console.log("_onGoogleApiLoaded");
+    const w = map.getDiv().offsetWidth;
+    const h = map.getDiv().offsetHeight;
+  };
 
   useEffect(() => {
     if (!listings) return;
@@ -110,7 +116,7 @@ const MapSearch = ({
             onClick={_onClick}
             onChange={_onBoundsChange}
             // onDragEnd={_onDragEnd}
-            // onGoogleApiLoaded={_onGoogleApiLoaded}
+            onGoogleApiLoaded={_onGoogleApiLoaded}
             options={createMapOptions}
           >
             {filtered_listings && filtered_listings.length !== 0

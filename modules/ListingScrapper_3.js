@@ -200,9 +200,11 @@ class ListingScrapper {
       page.setViewport({ width: 1280, height: 800 });
 
       // waitForSelector ??
-      await page.goto(this.url, { waitUntil: "networkidle0", timeout: 0 });
+      // await page.goto(this.url, { waitUntil: "networkidle0", timeout: 0 });
       // await page.goto(pageUrl, { waitUntil: "networkidle0" });
+      await page.goto(this.url);
 
+      await page.waitForSelector("#data-state");
       // const content = await page.content();
       const content = await page.evaluate(() => document.body.innerHTML);
 

@@ -3,13 +3,16 @@ import { connect } from "react-redux";
 
 import { Container, StyledFilterButton } from "./SearchListing.styles";
 import StayItem from "../StayItem/StayItem.component";
+import { locationDisplayTerms } from "../../utils/utils";
 
-const SearchListings = ({ listings, filtered_listings }) => {
+const SearchListings = ({ listings, filtered_listings, pickedLocation }) => {
   return (
     <Container>
       <div className="listing-location">
         <div className="listing-location__name">
-          <h1>Stays in Las Vegas</h1>
+          {pickedLocation && (
+            <h1>Stays in {locationDisplayTerms(pickedLocation)}</h1>
+          )}
         </div>
         <div className="listing-location__filters">
           <StyledFilterButton>Cancellation flexibility</StyledFilterButton>
@@ -37,9 +40,10 @@ const SearchListings = ({ listings, filtered_listings }) => {
   );
 };
 
-const mapStateToProps = ({ listing }) => ({
+const mapStateToProps = ({ listing, booking }) => ({
   listings: listing.listings,
   filtered_listings: listing.filtered_listings,
+  pickedLocation: booking.selectedLocation,
 });
 
 const mapDispatchToProps = {};

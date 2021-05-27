@@ -44,6 +44,16 @@ export const demoLocationSearchResults = [
   },
 ];
 
+export const locationDisplay = (string) => {
+  const n = string.split(",");
+  return n.length >= 1 ? `${n[0]}, ${n[1]}` : n[0];
+};
+
+export const locationDisplayTerms = (location) => {
+  if (location && location.terms) return location.terms[1].value;
+  return "";
+};
+
 export const dateDisplay = (date) => moment(date).format("MMMM DD");
 
 export const guestDisplay = (adultsCount, childrenCount, infantsCount = 0) => {
