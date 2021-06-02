@@ -30,7 +30,7 @@ const MapSearch = ({
     // console.log({ center, zoom, bounds, marginBounds }, center);
     console.log("update listings", bounds);
     // filterOnMapChange(bounds, listings);
-    listingsOnMapChange(bounds);
+    // listingsOnMapChange(bounds);
   };
 
   const _onClick = ({ x, y, lat, lng, event }) =>

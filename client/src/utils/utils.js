@@ -85,10 +85,10 @@ export const calcDayDiff = (
   checkIn,
   checkOut,
   measurementString = "days",
-  formatString = "YYYY-MMMM-DD"
+  formatString = "MMMM-DD-YYYY"
 ) => {
-  const a = moment(checkIn, formatString);
-  const b = moment(checkOut, formatString);
+  const a = moment(checkIn);
+  const b = moment(checkOut);
 
   return Math.abs(a.diff(b, measurementString));
 };
@@ -99,8 +99,10 @@ export const getPriceNum = (string) => {
   return parseInt(n[0]);
 };
 
-export const getTotalPrice = (pricePerNight, dayRange) =>
-  pricePerNight * dayRange;
+export const getTotalPrice = (pricePerNight, dayRange) => {
+  console.log("getTotalPrice", pricePerNight, dayRange);
+  return pricePerNight * dayRange;
+};
 
 export const unitDisplay = (itemNumber, unit) => {
   return itemNumber >= 1 ? unit + "s" : unit;

@@ -24,7 +24,7 @@ const ImageSlider = ({ images }) => {
         imagesFive.map((imageItem, idx) => (
           <>
             {imageItem && idx < 5 && (
-              <div key={imageItem._id}>
+              <div key={imageItem.id}>
                 <img src={imageItem.picture} alt="No slider" />
               </div>
             )}

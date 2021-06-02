@@ -14,7 +14,7 @@ import StarIcon from "@material-ui/icons/Star";
 
 import { calcDayDiff, getPriceNum, getTotalPrice } from "../../utils/utils";
 
-const StayItem = ({ listing, idx }) => {
+const StayItem = ({ listing, idx, checkIn, checkOut }) => {
   const {
     images,
     title,
@@ -24,10 +24,10 @@ const StayItem = ({ listing, idx }) => {
     ratings,
     reviewNumber,
     pricePerNight,
-    checkIn,
-    checkOut,
     _id,
   } = listing;
+
+  console.log("object", checkIn, checkOut);
 
   return (
     <Wrapper className="bnb-listing-item">
