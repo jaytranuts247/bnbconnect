@@ -139,6 +139,34 @@ router.get("/:listing_id", authMiddleware, async (req, res) => {
   }
 });
 
+router.post("/boundListing", authMiddleware, async (req, res) => {
+  const { ne, sw } = req.body;
+  console.log(ne, sw);
+  try {
+    const foundListings = await Listing.find({
+      $and: [
+        {
+          $and: [
+            { "coords.lat": { $lt: ne.lat } },
+            { "coords.lng": { $lt: ne.lng } },
+          ],
+        },
+        {
+          $and: [
+            { "coords.lat": { $gt: sw.lat } },
+            { "coords.lng": { $gt: sw.lng } },
+          ],
+        },
+      ],
+    });
+
+    res.json(foundListings);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send(err);
+  }
+});
+
 router.post("/test", async (req, res) => {
   try {
     const Scrapper = new ListingScrapperTertiary("", req.body);

@@ -82,3 +82,25 @@ export const filterOnMapChange = (bounds, listings) => async (dispatch) => {
     });
   }
 };
+
+export const listingsOnMapChange = (bounds) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const res = await axios.post("/api/listings/boundListing", bounds, config);
+    console.log("listingsOnMapChange", res.data);
+    dispatch({
+      type: SET_LISTINGS,
+      payload: res.data,
+    });
+  } catch (err) {
+    console.log(err);
+    dispatch({
+      type: SET_ERROR_LISTING,
+      payload: err.message,
+    });
+  }
+};
