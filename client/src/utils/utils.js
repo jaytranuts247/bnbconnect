@@ -100,7 +100,6 @@ export const getPriceNum = (string) => {
 };
 
 export const getTotalPrice = (pricePerNight, dayRange) => {
-  console.log("getTotalPrice", pricePerNight, dayRange);
   return pricePerNight * dayRange;
 };
 

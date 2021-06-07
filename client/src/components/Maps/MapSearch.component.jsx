@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import GoogleMapReact from "google-map-react";
+import GoogleMapReact, { fitBounds } from "google-map-react";
 import { LatLngLocations } from "../../config";
 import ListingLocationMarker from "../ListingLocationMarker/ListingLocationMarker.component";
 import {
   filterOnMapChange,
   listingsOnMapChange,
 } from "../../redux/listing/listing.actions";
-import { getCenter } from "../../utils/map_utils";
 
 const MapContainer = styled.div`
   display: flex;
@@ -26,31 +25,51 @@ const MapSearch = ({
 }) => {
   const [mapCenter, setMapCenter] = useState(center);
   const [mapZoom, setMapZoom] = useState(zoom);
-  const _onBoundsChange = ({ bounds }) => {
-    // console.log({ center, zoom, bounds, marginBounds }, center);
-    console.log("update listings", bounds);
-    // filterOnMapChange(bounds, listings);
-    // listingsOnMapChange(bounds);
-  };
 
   const _onClick = ({ x, y, lat, lng, event }) =>
     console.log(x, y, lat, lng, event);
 
-  // const _onDragEnd = (map) => {
-  //   console.log(map);
-  //   return;
-  // };
+  const _onDragEnd = (map) => {
+    console.log("_onDragEnd");
 
-  // const _onGoogleApiLoaded = ({ map, maps }) => {
-  //   // console.log( maps);
-  // };
+    const bounds = {
+      ne: map.getBounds().getNorthEast().toJSON(),
+      sw: map.getBounds().getSouthWest().toJSON(),
+    };
+    if (listings) listingsOnMapChange(bounds);
+  };
 
   useEffect(() => {
     if (!listings) return;
-    const avgCenter = getCenter(listings);
-    setMapCenter(avgCenter);
-    setMapZoom(13);
-  }, [listings]);
+    console.log("useffect map");
+
+    const bounds = new window.google.maps.LatLngBounds();
+
+    listings.forEach((listing) => {
+      const { lat, lng } = listing.coords;
+      bounds.extend(new window.google.maps.LatLng(lat, lng));
+    });
+
+    const newBounds = {
+      ne: {
+        lat: bounds.toJSON().north,
+        lng: bounds.toJSON().east,
+      },
+      sw: {
+        lat: bounds.toJSON().south,
+        lng: bounds.toJSON().west,
+      },
+    };
+    const size = {
+      width: 640, // Map width in pixels
+      height: 380, // Map height in pixels
+    };
+
+    const { center, zoom } = fitBounds(newBounds, size);
+
+    setMapCenter(center);
+    setMapZoom(zoom);
+  }, []);
 
   const createMapOptions = (maps) => {
     return {
@@ -113,8 +132,8 @@ const MapSearch = ({
             center={mapCenter}
             zoom={mapZoom}
             onClick={_onClick}
-            onChange={_onBoundsChange}
-            // onDragEnd={_onDragEnd}
+            // onChange={_onBoundsChange}
+            onDragEnd={_onDragEnd}
             // onGoogleApiLoaded={_onGoogleApiLoaded}
             options={createMapOptions}
           >
