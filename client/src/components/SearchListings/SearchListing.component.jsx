@@ -1,10 +1,25 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { connect } from "react-redux";
 
 import { Container, StyledFilterButton } from "./SearchListing.styles";
 import StayItem from "../StayItem/StayItem.component";
+import { useHistory } from "react-router";
+import { clearListingErrors } from "../../redux/listing/listing.actions";
 
-const SearchListings = ({ listings, filtered_listings, checkIn, checkOut }) => {
+const SearchListings = ({
+  listings,
+  checkIn,
+  checkOut,
+  errors,
+  clearListingErrors,
+}) => {
+  const history = useHistory();
+
+  useEffect(() => {
+    if (errors) history.push("/home");
+    clearListingErrors();
+  }, [errors]);
+
   return (
     <Container>
       <div className="listing-location">
@@ -43,9 +58,14 @@ const mapStateToProps = ({ listing, booking }) => ({
   filtered_listings: listing.filtered_listings,
   checkIn: booking.startDate,
   checkOut: booking.endDate,
+  errors: listing.errors,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    clearListingErrors: () => dispatch(clearListingErrors()),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchListings);
 

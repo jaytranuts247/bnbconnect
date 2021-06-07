@@ -5,6 +5,7 @@ import {
   SET_FILTERED_LISTINGS,
   SET_CURRENT_LISTING,
   SET_ERROR_LISTING,
+  CLEAR_ERROR_LISTING,
 } from "../types";
 
 import { filterListingInBound } from "../../utils/map_utils";
@@ -103,4 +104,8 @@ export const listingsOnMapChange = (bounds) => async (dispatch) => {
       payload: err.message,
     });
   }
+};
+
+export const clearListingErrors = () => {
+  return { type: CLEAR_ERROR_LISTING };
 };

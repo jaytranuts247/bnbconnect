@@ -238,10 +238,10 @@ class ListingScrapper {
 
       while (listingData.length === 0 || loadingAttempt < 2) {
         // get html file
-        // var html = await this.fetchHtml();
-        var html = await axios.get(
-          `https://airbnb-scrapper.herokuapp.com/scrape?url=${this.url}`
-        );
+        var html = await this.fetchHtml();
+        // var html = await axios.get(
+        //   `https://airbnb-scrapper.herokuapp.com/scrapejson?url=${this.url}`
+        // );
 
         // save html file to disk
         fs.writeFileSync("./html.html", html);

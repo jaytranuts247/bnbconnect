@@ -58,11 +58,11 @@ const autocompletedInput = {
 
 router.post("/", async (req, res) => {
   let flag = false;
-  let attemp = 0;
+  let attempt = 0;
   var listingFound = null;
   console.log("request body", req.body);
   try {
-    while (attemp < 2 && !flag) {
+    while (attempt < 2 && !flag) {
       // find if there is any listings according to place_id searched in Db
       listingFound = await Listing.find({
         "locationInfo.place_id": req.body.locationInfo.place_id,
@@ -73,9 +73,9 @@ router.post("/", async (req, res) => {
       // then Start scrape listing and pushing Scrapped listings to Db
       if (!listingFound || listingFound.length <= 2) {
         // stop and retrun status when dont have any listing in DB
-        // return res
-        //   .status(400)
-        //   .json({ msg: "cannot find any listing according to your search" });
+        return res
+          .status(400)
+          .json({ msg: "cannot find any listing according to your search" });
         // // Start Scrapping listings base on place_id
         console.log(
           `cannot found enough listings in DB with ${listingFound.length} listings. Start Scrapping listings From Airbnb`
@@ -94,7 +94,7 @@ router.post("/", async (req, res) => {
             return await newListing.save();
           })
         );
-        attemp++;
+        attempt++;
         continue;
       }
 

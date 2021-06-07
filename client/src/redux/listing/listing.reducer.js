@@ -47,6 +47,7 @@ const listingReducer = (state = initialState, action) => {
       return {
         ...state,
         errors: action.payload,
+        isFetching: false,
       };
     case CLEAR_ERROR_LISTING:
       return {
