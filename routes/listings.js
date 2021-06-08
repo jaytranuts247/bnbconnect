@@ -74,7 +74,7 @@ router.post("/", async (req, res) => {
       if (!listingFound || listingFound.length <= 2) {
         // stop and retrun status when dont have any listing in DB
         return res
-          .status(400)
+          .status(404)
           .json({ msg: "cannot find any listing according to your search" });
         // // Start Scrapping listings base on place_id
         console.log(
