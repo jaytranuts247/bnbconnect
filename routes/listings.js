@@ -121,7 +121,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/:listing_id", authMiddleware, async (req, res) => {
+router.get("/:listing_id", async (req, res) => {
   const { listing_id } = req.params;
   try {
     const foundListings = await Listing.findOne({
