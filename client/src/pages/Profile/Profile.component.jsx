@@ -8,7 +8,9 @@ import {
   loadProfile,
   handleChange,
   updateProfile,
+  clearProfileErrors,
 } from "../../redux/profile/profile.actions";
+import { useHistory } from "react-router";
 
 const OnEdit = ({
   intro,
@@ -75,12 +77,16 @@ const Profile = ({
   user,
   intro,
   profile,
+  errors,
   loadProfile,
   createProfile,
   handleChange,
   updateProfile,
+  clearProfileErrors,
 }) => {
   const [isEdit, setIsEdit] = useState(false);
+
+  const history = useHistory();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -100,7 +106,11 @@ const Profile = ({
 
   useEffect(() => {
     if (user) loadProfile(user._id);
-  }, [user]);
+    if (errors) {
+      history.push("/home");
+      clearProfileErrors();
+    }
+  }, [user, errors]);
 
   return (
     <Wrapper>
@@ -136,6 +146,7 @@ const mapStateToProps = ({ user, profile }) => ({
   user: user.user,
   intro: profile.intro,
   profile: profile.profile,
+  errors: profile.errors,
 });
 
 const mapDispatchToProps = (dispatch) => {
@@ -144,6 +155,7 @@ const mapDispatchToProps = (dispatch) => {
     loadProfile: (user_id) => dispatch(loadProfile(user_id)),
     createProfile: (profile) => dispatch(createProfile(profile)),
     handleChange: (value) => dispatch(handleChange(value)),
+    clearProfileErrors: () => dispatch(clearProfileErrors()),
   };
 };
 

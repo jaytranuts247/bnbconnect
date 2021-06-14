@@ -2,6 +2,7 @@ import {
   LOAD_PROFILE_INTRO,
   SET_ERROR_PROFILE,
   SET_PROFILE_INTRO,
+  CLEAR_ERROR_PROFILE,
 } from "../types";
 import axios from "axios";
 
@@ -61,6 +62,10 @@ export const updateProfile = (profile) => async (dispatch) => {
       payload: err.message,
     });
   }
+};
+
+export const clearProfileErrors = () => {
+  return { type: CLEAR_ERROR_PROFILE };
 };
 
 // no need to delete

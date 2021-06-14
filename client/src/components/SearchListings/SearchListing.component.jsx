@@ -13,11 +13,12 @@ const SearchListings = ({
   errors,
   clearListingErrors,
 }) => {
-  const history = useHistory();
+  // const history = useHistory();
 
   useEffect(() => {
-    if (errors) history.push("/home");
-    clearListingErrors();
+    // if (errors) history.push("/home");
+    console.log(errors);
+    if (errors) clearListingErrors();
   }, [errors]);
 
   return (
