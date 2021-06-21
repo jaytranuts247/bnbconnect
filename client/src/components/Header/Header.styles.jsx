@@ -60,7 +60,7 @@ export const HeaderContainer = styled(motion.div)`
       width: auto;
       cursor: pointer;
     }
-    img {
+    img.header__logo {
       object-fit: contain;
       height: 60px;
       /* margin-left: 20px; */

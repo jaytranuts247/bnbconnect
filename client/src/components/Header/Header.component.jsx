@@ -138,6 +138,7 @@ const Header = ({
             <img
               src="../../../images/airbnb-logo.png"
               alt="logo"
+              className="header__logo"
               onClick={() => history.push("/home")}
             />
             {(isSearchPath || isListingPath) &&
