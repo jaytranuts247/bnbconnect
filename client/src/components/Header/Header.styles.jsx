@@ -57,6 +57,15 @@ export const HeaderContainer = styled(motion.div)`
       object-fit: contain;
       height: 80px;
       /* margin-left: 20px; */
+      width: auto;
+      cursor: pointer;
+    }
+    img {
+      object-fit: contain;
+      height: 60px;
+      /* margin-left: 20px; */
+      /* width: 300px; */
+      margin: auto 0;
       cursor: pointer;
     }
 
