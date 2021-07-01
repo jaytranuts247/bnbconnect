@@ -120,7 +120,7 @@ const MapSearch = ({
   };
 
   return (
-    <div>
+    <>
       {mapCenter && mapZoom && (
         <MapContainer>
           <GoogleMapReact
@@ -150,7 +150,7 @@ const MapSearch = ({
           </GoogleMapReact>
         </MapContainer>
       )}
-    </div>
+    </>
   );
 };
 
