@@ -1,5 +1,5 @@
-#BnbConnect
-#### [Visit the live site](https://bnbconnect.herokuapp.com/home)
+# BnbConnect
+### [Visit the live site](https://bnbconnect.herokuapp.com/home)
 
 BnbConnect is a single-page, full-stack web application modeled after Airbnb and made to focus helping individual to effectively plan their trip. It use React.js and Redux for front-end and Node.js and MongoDB in the back-end. The website hosted on Heroku.
 
