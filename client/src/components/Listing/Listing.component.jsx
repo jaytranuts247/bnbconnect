@@ -4,7 +4,12 @@ import { useParams } from "react-router-dom";
 import { useHistory } from "react-router";
 import moment from "moment";
 
-import { LineSeperator, StyledButton, Wrapper } from "../../styles/Bases";
+import {
+  LineSeperator,
+  StyledAlert,
+  StyledButton,
+  Wrapper,
+} from "../../styles/Bases";
 import {
   Container,
   TitleSection,
@@ -42,10 +47,14 @@ import {
 import _ from "lodash";
 import MapListing from "../Maps/MapListing.component";
 import GuestCount from "../GuestCount.component";
-import { createUserBooking } from "../../redux/user_booking/user_booking.actions";
+import {
+  clearUserBookingErrors,
+  createUserBooking,
+} from "../../redux/user_booking/user_booking.actions";
 import { loadCurrentListing } from "../../redux/listing/listing.actions";
 import { loadReviews } from "../../redux/review/review.actions";
 import { foundReview, getAvgRatings } from "../../utils/review_utils";
+import { setAlert } from "../../redux/alert/alert.actions";
 
 const amenities = [
   "wifi",
@@ -137,12 +146,16 @@ const Listing = ({
   childrenNum,
   setBookingDates,
   createUserBooking,
+  clearUserBookingErrors,
   reviews,
   loadReviews,
   loadCurrentListing,
   isAuthenticated,
   user,
   setLoginSignUp,
+  booking_errors,
+  alert,
+  setAlert,
 }) => {
   const [toggleDatePick, setToggleDatePick] = useState(false);
   const [toggleGuest, setToggleGuest] = useState(false);
@@ -198,11 +211,19 @@ const Listing = ({
     };
 
     console.log("booking", booking);
-    createUserBooking(booking).then(() => {
-      // console.log("redirect to booking", user_id);
-      history.push("/bookings");
-    });
+    let msg = await createUserBooking(booking);
+    if (msg === "Your Booking day range is overalapped with others") {
+      return;
+    }
+    history.push("/bookings");
   };
+
+  useEffect(() => {
+    if (!booking_errors) return;
+
+    setAlert(booking_errors, "error");
+    clearUserBookingErrors();
+  }, [booking_errors]);
 
   useEffect(() => {
     loadCurrentListing(listing_id);
@@ -425,6 +446,16 @@ const Listing = ({
                       <span>{guestDisplay(adultsNum, childrenNum)}</span>
                     </div>
                   </div>
+                  {alert.length !== 0 &&
+                    alert.map((alertItem) => (
+                      <StyledAlert
+                        key={alertItem.id}
+                        severity={alertItem.type}
+                        variant="standard"
+                      >
+                        <strong>{alertItem.msg}</strong>
+                      </StyledAlert>
+                    ))}
                   <StyledButton
                     backgroundColor={
                       "radial-gradient(circle at calc((100 - 95.8166) * 1%) calc((100 - 54.1667) * 1%), #FF385C 0%, #E61E4D 27.5%, #E31C5F 40%, #D70466 67%, #BD1E59 90%, #BD1E59 100% ) !important"
@@ -642,7 +673,14 @@ const Listing = ({
     </Wrapper>
   );
 };
-const mapStateToProps = ({ listing, booking, user, review }) => ({
+const mapStateToProps = ({
+  listing,
+  booking,
+  user,
+  review,
+  user_booking,
+  alert,
+}) => ({
   listings: listing.listings,
   startDate: booking.startDate,
   endDate: booking.endDate,
@@ -652,6 +690,8 @@ const mapStateToProps = ({ listing, booking, user, review }) => ({
   user: user.user,
   currentListing: listing.currentListing,
   reviews: review.reviews,
+  booking_errors: user_booking.errors,
+  alert,
 });
 
 const mapDispatchToProps = (dispatch) => {
@@ -661,6 +701,8 @@ const mapDispatchToProps = (dispatch) => {
     loadCurrentListing: (listing_id) =>
       dispatch(loadCurrentListing(listing_id)),
     loadReviews: (listing_id) => dispatch(loadReviews(listing_id)),
+    setAlert: (msg, type) => dispatch(setAlert(msg, type)),
+    clearUserBookingErrors: () => dispatch(clearUserBookingErrors()),
   };
 };
 

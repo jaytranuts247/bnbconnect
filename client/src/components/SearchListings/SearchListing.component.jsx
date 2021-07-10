@@ -1,18 +1,31 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { connect } from "react-redux";
 
 import { Container, StyledFilterButton } from "./SearchListing.styles";
 import StayItem from "../StayItem/StayItem.component";
-import { locationDisplayTerms } from "../../utils/utils";
 
-const SearchListings = ({ listings, filtered_listings, pickedLocation }) => {
+import { clearListingErrors } from "../../redux/listing/listing.actions";
+
+const SearchListings = ({
+  listings,
+  checkIn,
+  checkOut,
+  errors,
+  clearListingErrors,
+}) => {
+  // const history = useHistory();
+
+  useEffect(() => {
+    // if (errors) history.push("/home");
+    console.log(errors);
+    if (errors) clearListingErrors();
+  }, [errors]);
+
   return (
     <Container>
       <div className="listing-location">
         <div className="listing-location__name">
-          {pickedLocation && (
-            <h1>Stays in {locationDisplayTerms(pickedLocation)}</h1>
-          )}
+          <h1>Stays in Las Vegas</h1>
         </div>
         <div className="listing-location__filters">
           <StyledFilterButton>Cancellation flexibility</StyledFilterButton>
@@ -23,18 +36,19 @@ const SearchListings = ({ listings, filtered_listings, pickedLocation }) => {
       </div>
       {/* <HSeperator /> */}
       <div className="bnb-listing">
-        {filtered_listings && filtered_listings.length !== 0
-          ? filtered_listings.map((listing, idx) => (
-              <Fragment key={idx}>
-                {listing && <StayItem listing={listing} idx={idx} />}
-              </Fragment>
-            ))
-          : listings &&
-            listings.map((listing, idx) => (
-              <Fragment key={idx}>
-                {listing && <StayItem listing={listing} idx={idx} />}
-              </Fragment>
-            ))}
+        {listings &&
+          listings.map((listing, idx) => (
+            <Fragment key={idx}>
+              {listing && (
+                <StayItem
+                  listing={listing}
+                  idx={idx}
+                  checkIn={checkIn}
+                  checkOut={checkOut}
+                />
+              )}
+            </Fragment>
+          ))}
       </div>
     </Container>
   );
@@ -43,9 +57,28 @@ const SearchListings = ({ listings, filtered_listings, pickedLocation }) => {
 const mapStateToProps = ({ listing, booking }) => ({
   listings: listing.listings,
   filtered_listings: listing.filtered_listings,
-  pickedLocation: booking.selectedLocation,
+  checkIn: booking.startDate,
+  checkOut: booking.endDate,
+  errors: listing.errors,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    clearListingErrors: () => dispatch(clearListingErrors()),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchListings);
+
+// {filtered_listings && filtered_listings.length !== 0
+//   ? filtered_listings.map((listing, idx) => (
+//       <Fragment key={idx}>
+//         {listing && <StayItem listing={listing} idx={idx} />}
+//       </Fragment>
+//     ))
+//   : listings &&
+//     listings.map((listing, idx) => (
+//       <Fragment key={idx}>
+//         {listing && <StayItem listing={listing} idx={idx} />}
+//       </Fragment>
+//     ))}

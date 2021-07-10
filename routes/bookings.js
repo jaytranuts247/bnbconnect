@@ -37,6 +37,7 @@ router.get("/:userId", authMiddleware, async (req, res) => {
     res.json(bookingList);
   } catch (err) {
     console.log(err.messasge);
+    res.json(err.message);
   }
 });
 
@@ -88,7 +89,7 @@ router.post("/", authMiddleware, async (req, res) => {
     res.json(booking);
   } catch (err) {
     console.log(err, err.message);
-    res.send(err);
+    res.json(err.message);
   }
 });
 

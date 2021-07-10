@@ -1,14 +1,13 @@
 const express = require("express");
-const moment = require("moment");
 
 const router = express.Router();
 
 const authMiddleware = require("../middlewares/authMiddleware");
 const joiValidator = require("../middlewares/joiValidator");
 
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const config = require("config");
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+// const config = require("config");
 
 const Schemas = require("../middlewares/Schemas");
 const Review = require("../model/Review");

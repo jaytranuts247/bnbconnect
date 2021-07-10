@@ -8,7 +8,11 @@ airbnb-clone.md
 http_proxies.txt
 jsonData.js
 listingData.txt
+
 note.js
+
 /testFile
 /.netlify
-/client
+
+
+netlify.toml

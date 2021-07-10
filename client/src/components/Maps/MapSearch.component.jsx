@@ -4,8 +4,10 @@ import styled from "styled-components";
 import GoogleMapReact, { fitBounds } from "google-map-react";
 import { LatLngLocations } from "../../config";
 import ListingLocationMarker from "../ListingLocationMarker/ListingLocationMarker.component";
-import { filterOnMapChange } from "../../redux/listing/listing.actions";
-import { getCenter } from "../../utils/map_utils";
+import {
+  filterOnMapChange,
+  listingsOnMapChange,
+} from "../../redux/listing/listing.actions";
 
 const MapContainer = styled.div`
   display: flex;
@@ -19,39 +21,52 @@ const MapSearch = ({
   listings,
   filtered_listings,
   filterOnMapChange,
+  listingsOnMapChange,
 }) => {
   const [mapCenter, setMapCenter] = useState(center);
   const [mapZoom, setMapZoom] = useState(zoom);
-  const [bounds, setBounds] = useState(null);
-
-  const _onBoundsChange = ({ bounds }) => {
-    // console.log({ center, zoom, bounds, marginBounds }, center);
-    // console.log("update listings", bounds);
-    console.log("_onBoundsChange");
-    filterOnMapChange(bounds, listings);
-    setBounds(bounds);
-  };
-
   const _onClick = ({ x, y, lat, lng, event }) =>
     console.log(x, y, lat, lng, event);
 
-  // const _onDragEnd = (map) => {
-  //   console.log(map);
-  //   return;
-  // };
-
-  const _onGoogleApiLoaded = ({ map, maps }) => {
-    console.log("_onGoogleApiLoaded");
-    const w = map.getDiv().offsetWidth;
-    const h = map.getDiv().offsetHeight;
+  const _onDragEnd = (map) => {
+    const bounds = {
+      ne: map.getBounds().getNorthEast().toJSON(),
+      sw: map.getBounds().getSouthWest().toJSON(),
+    };
+    if (listings) listingsOnMapChange(bounds);
   };
 
   useEffect(() => {
     if (!listings) return;
-    const avgCenter = getCenter(listings);
-    setMapCenter(avgCenter);
-    setMapZoom(13);
-  }, [listings]);
+    console.log("useffect map");
+
+    const bounds = new window.google.maps.LatLngBounds();
+
+    listings.forEach((listing) => {
+      const { lat, lng } = listing.coords;
+      bounds.extend(new window.google.maps.LatLng(lat, lng));
+    });
+
+    const newBounds = {
+      ne: {
+        lat: bounds.toJSON().north,
+        lng: bounds.toJSON().east,
+      },
+      sw: {
+        lat: bounds.toJSON().south,
+        lng: bounds.toJSON().west,
+      },
+    };
+    const size = {
+      width: 640, // Map width in pixels
+      height: 380, // Map height in pixels
+    };
+
+    const { center, zoom } = fitBounds(newBounds, size);
+
+    setMapCenter(center);
+    setMapZoom(zoom);
+  }, []);
 
   const createMapOptions = (maps) => {
     return {
@@ -102,7 +117,7 @@ const MapSearch = ({
   };
 
   return (
-    <div>
+    <>
       {mapCenter && mapZoom && (
         <MapContainer>
           <GoogleMapReact
@@ -114,34 +129,25 @@ const MapSearch = ({
             center={mapCenter}
             zoom={mapZoom}
             onClick={_onClick}
-            onChange={_onBoundsChange}
-            // onDragEnd={_onDragEnd}
-            onGoogleApiLoaded={_onGoogleApiLoaded}
+            // onChange={_onBoundsChange}
+            onDragEnd={_onDragEnd}
+            // onGoogleApiLoaded={_onGoogleApiLoaded}
             options={createMapOptions}
           >
-            {filtered_listings && filtered_listings.length !== 0
-              ? filtered_listings.map((listing) => (
-                  <ListingLocationMarker
-                    key={listing._id}
-                    lat={listing.coords.lat}
-                    lng={listing.coords.lng}
-                    text={listing.pricePerNight}
-                  />
-                ))
-              : listings &&
-                listings.map((listing) => (
-                  <ListingLocationMarker
-                    key={listing._id}
-                    lat={listing.coords.lat}
-                    lng={listing.coords.lng}
-                    text={listing.pricePerNight}
-                  />
-                ))}
+            {listings &&
+              listings.map((listing) => (
+                <ListingLocationMarker
+                  key={listing._id}
+                  lat={listing.coords.lat}
+                  lng={listing.coords.lng}
+                  text={listing.pricePerNight}
+                />
+              ))}
             {/* <AnyReactComponent lat={59.955413} lng={30.337844} text="My Marker" /> */}
           </GoogleMapReact>
         </MapContainer>
       )}
-    </div>
+    </>
   );
 };
 
@@ -159,6 +165,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     filterOnMapChange: (bounds, listings) =>
       dispatch(filterOnMapChange(bounds, listings)),
+    listingsOnMapChange: (bounds) => dispatch(listingsOnMapChange(bounds)),
   };
 };
 

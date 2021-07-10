@@ -57,10 +57,10 @@ export const ListingContainer = styled.div`
         color: #fff;
       }
       .slick-next {
-        right: 10px;
+        right: 20px;
       }
       .slick-prev {
-        left: 10px;
+        left: 20px;
       }
       .slick-arrow {
         z-index: 10;

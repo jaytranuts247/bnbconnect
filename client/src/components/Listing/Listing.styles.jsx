@@ -4,8 +4,13 @@ import { Medal } from "@styled-icons/remix-line/Medal";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   padding: 30px 80px;
-  width: 100vh;
+  /* width: 100vw; */
+  margin: 0 auto;
+  & > * {
+    max-width: 1280px;
+  }
 `;
 
 export const TitleSection = styled.div`
@@ -64,7 +69,7 @@ export const ImagePreviewSection = styled.div`
   border: none;
   outline: none;
   margin: 20px 0;
-  max-width: 1128px;
+  max-width: 1280px;
 
   .image-preview-container {
     display: flex;
@@ -112,7 +117,7 @@ export const ImagePreviewSection = styled.div`
 export const MainSection = styled.div`
   display: flex;
   position: relative;
-  max-width: 1128px;
+  max-width: 1280px;
   width: 100%;
   padding: 20px 0;
   margin-top: 20px;
@@ -121,6 +126,7 @@ export const MainSection = styled.div`
 
 export const MainContent = styled.div`
   flex: 1 1 60%;
+  padding-right: 20px;
 
   /* padding: 30px 50px 0; */
 
@@ -158,7 +164,7 @@ export const MainContent = styled.div`
 `;
 
 export const SideForm = styled.div`
-  flex: 0 0 450px;
+  flex: 1 1 450px;
   display: flex;
   flex-direction: column;
 

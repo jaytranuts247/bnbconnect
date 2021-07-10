@@ -1,72 +1,287 @@
-# Getting Started with Create React App
+# BnbConnect
+### [Visit the live site](https://bnbconnect.herokuapp.com/home)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+BnbConnect is a single-page, full-stack web application modeled after Airbnb and made to focus helping individual to effectively plan their trip. It use React.js and Redux for front-end and Node.js and MongoDB in the back-end. The website hosted on Heroku.
 
-## Available Scripts
+![](client/public/readme/bnbconnect_demo.gif)
 
-In the project directory, you can run:
+## Technologies
+- React/Redux
+- Nodejs
+- Express.js
+- Mongoose
+- MongoDb
+- JavaScript
+- Styled-Components
+- Google Maps API
+  
+## Key features
 
-### `yarn start`
+#### [BnbConnect Design documents](https://github.com/jaytranuts247/bnbconnect/wiki)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+#### User Authentication 
+- User can sign up and login with existing account
+- Invalid login or signup will trigger errors on both front and back end.
+- logged in users can access features such as making reservations, write reviews on listings.
+![](client/public/readme/bnbconnect_demo.gif)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```javascript
+router.post(
+  "/",
+  joiValidator(Schemas.userRegister, "body"),
+  async (req, res) => {
+    const { firstName, lastName, email, password } = req.body;
+    console.log(req.body);
 
-### `yarn test`
+    try {
+      let user = await User.findOne({ email });
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+      // check if user is exists
+      if (user) return res.status(400).json({ msg: "user already exists" });
 
-### `yarn build`
+      // if not, create new user - mongodb auto add _id to user
+      user = new User({
+        firstName,
+        lastName,
+        email,
+        password,
+      });
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+      // encrypt password
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+      await user.save(); // save user to db
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+      // make token and send res
+      const payload = {
+        user: {
+          _id: user._id,
+        },
+      };
 
-### `yarn eject`
+      jwt.sign(
+        payload,
+        jwtSecret,
+        {
+          expiresIn: 360000,
+        },
+        (err, token) => {
+          if (err) throw err;
+          console.log(token);
+          res.json({ token });
+        }
+      );
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+```
+#### Listings and Search/Scrapping 
+- the Scrapping function will take user search input and start scrapping listings on Airbnb website, push it to BnbConnect database, and then response the corresponding data to the front end. (Scrapping function only works locally, not on live site).
+```javascript
+export const filterListingInBound = (bounds, coords) => {
+  let result = true;
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+  for (const [key, latLngBound] of Object.entries(bounds)) {
+    if (key === "ne") {
+      if (latLngBound.lat < coords.lat || latLngBound.lng < coords.lng) {
+        result = false;
+      }
+    }
+    if (key === "sw") {
+      if (latLngBound.lat > coords.lat || latLngBound.lng > coords.lng) {
+        result = false;
+      }
+    }
+  }
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  return result;
+};
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```
+- Search bar is integrated with autocompletion widget from Goggle Maps Places API.
+- Users can search listings with autocompletion from Google Maps API.
+![](client/public/readme/bnbconnect_autocompletion_fast.gif)
+```javascript 
+ // * Handle query autocompletion
+  useEffect(() => {
+    if (window.google) {
+      const handleSuggestions = (predictions, status) => {
+        if (
+          status !== window.google.maps.places.PlacesServiceStatus.OK ||
+          !predictions
+        ) {
+          console.log(status);
+          return;
+        }
+        setRecommendedResults(predictions);
+      };
+      const autoCompleteService =
+        new window.google.maps.places.AutocompleteService();
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+      autoCompleteService.getPlacePredictions(
+        { input: locationInput },
+        handleSuggestions
+      );
+    }
+  }, [locationInput]);
+```
+- Users can explore more listings by moving, zoom in and out maps, more listings will be updated while maps boundary change.
+![](client/public/readme/bnbconnect_boundary_change_fast.gif)
+```javascript
+  const _onDragEnd = (map) => {
+    console.log("_onDragEnd");
 
-## Learn More
+    const bounds = {
+      ne: map.getBounds().getNorthEast().toJSON(),
+      sw: map.getBounds().getSouthWest().toJSON(),
+    };
+    if (listings) listingsOnMapChange(bounds);
+  };
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```javascript 
+export const listingsOnMapChange = (bounds) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const res = await axios.post("/api/listings/boundListing", bounds, config);
+    console.log("listingsOnMapChange", res.data);
+    dispatch({
+      type: SET_LISTINGS,
+      payload: res.data,
+    });
+  } catch (err) {
+    console.log(err);
+    dispatch({
+      type: SET_ERROR_LISTING,
+      payload: err.message,
+    });
+  }
+};
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
 
-### Code Splitting
+- every listing comes with text description, location information, amenities, reviews, ratings, prices including total prices accroding to user booking date range, calendar that show booking date range, map that show listing location.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### Bookings
+- User can make reservation by pressing reserve button to add listing reservation to their trip.
+-  User is unable to make reservation if listing is already reserved.
+![](client/public/readme/bnbconnect_booking_demo_fast.gif)
+```javascript
 
-### Making a Progressive Web App
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      setLoginSignUp(true);
+      return;
+    }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+    const booking = {
+      listing_id: listing_id,
+      guest_id: user._id,
+      checkIn: startDate,
+      checkOut: endDate,
+    };
 
-### Advanced Configuration
+    console.log("booking", booking);
+    let msg = await createUserBooking(booking);
+    if (msg === "Your Booking day range is overalapped with others") {
+      return;
+    }
+    history.push("/bookings");
+  };
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```javascript 
 
-### Deployment
+export const createUserBooking = (booking) => async (dispatch) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+    console.log("createUserBooking");
+    const res = await axios.post(
+      "http://localhost:5000/api/bookings",
+      booking,
+      config
+    );
 
-### `yarn build` fails to minify
+    // if  user booking date range is overlapping with existing bookings in database
+    // then raise the booking error
+    if (
+      res.data.msg &&
+      res.data.msg === "Your Booking day range is overalapped with others"
+    ) {
+      dispatch({
+        type: SET_USER_BOOKING_ERROR,
+        payload: res.data.msg,
+      });
+      return res.data.msg;
+    }
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+    console.log("newBooking", res.data, res.data.guest_id);
+    let user_id =
+      res.data.guest_id !== undefined ? res.data.guest_id : booking.guest_id;
 
-# airbnb-clone-v2
+    dispatch(loadUserBooking(user_id));
+  } catch (err) {
+    console.log(err, err.message);
+    dispatch({
+      type: SET_USER_BOOKING_ERROR,
+      payload: err.message,
+    });
+  }
+};
+```
+- User can access their reservation under "Booking" section in the menu dropdown.
+![](client/public/readme/bnbconnect_booking_section_fast.gif)
+```javascript 
+// bookings.js route
+router.post("/", authMiddleware, async (req, res) => {
+  // ....
+
+    // check if booking existed in DB
+    const overlappedBookingList = await Booking.find({
+      listing_id: req.body.listing_id,
+      $nor: [
+        {
+          $and: [
+            { checkIn: { $lt: req.body.checkIn } },
+            { checkOut: { $lt: req.body.checkOut } },
+          ],
+        },
+        {
+          $and: [
+            { checkIn: { $gt: req.body.checkIn } },
+            { checkOut: { $gt: req.body.checkOut } },
+          ],
+        },
+      ],
+    });
+
+  // ...
+}
+```
+
+#### Reviews
+- User can leave their reviews and ratings for listing they have already made reservation.
+- User can rate their booking within six categories - accuracy, communication, cleanliness, location, check-in, and value.
+- Listing show the average review rating and update number of reviews every new rating is submitted.
+![](client/public/readme/bnbconect_reviews_fast.gif)
+#### User Profile 
+- User can access their profile under "Profile" section in dropdown menu.
+- Users can create and edit their profile introduction.
+
+

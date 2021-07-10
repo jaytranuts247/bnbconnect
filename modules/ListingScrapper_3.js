@@ -2,7 +2,7 @@ const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
 const proxyChain = require("proxy-chain");
 const getFreeProxies = require("get-free-https-proxy");
-
+const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
@@ -205,6 +205,8 @@ class ListingScrapper {
       await page.goto(this.url);
 
       await page.waitForSelector("#data-state");
+
+      await page.waitForSelector("#data-state");
       // const content = await page.content();
       const content = await page.evaluate(() => document.body.innerHTML);
 
@@ -238,6 +240,9 @@ class ListingScrapper {
       while (listingData.length === 0 || loadingAttempt < 2) {
         // get html file
         var html = await this.fetchHtml();
+        // var html = await axios.get(
+        //   `https://airbnb-scrapper.herokuapp.com/scrapejson?url=${this.url}`
+        // );
 
         // save html file to disk
         fs.writeFileSync("./html.html", html);

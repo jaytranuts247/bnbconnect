@@ -5,6 +5,7 @@ import {
   SET_FILTERED_LISTINGS,
   SET_CURRENT_LISTING,
   SET_ERROR_LISTING,
+  CLEAR_ERROR_LISTING,
 } from "../types";
 
 import { filterListingInBound } from "../../utils/map_utils";
@@ -52,8 +53,8 @@ export const setListings = (requestBody) => async (dispatch) => {
       body: JSON.stringify(requestBody),
     });
     const data = await res.json();
-
-    dispatch({ type: SET_LISTINGS, payload: data });
+    console.log(res, data);
+    dispatch({ type: SET_LISTINGS, payload: [...data] });
 
     dispatch(toggleIsFetching());
   } catch (err) {
@@ -81,4 +82,30 @@ export const filterOnMapChange = (bounds, listings) => async (dispatch) => {
       payload: err.message,
     });
   }
+};
+
+export const listingsOnMapChange = (bounds) => async (dispatch) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const res = await axios.post("/api/listings/boundListing", bounds, config);
+    console.log("listingsOnMapChange", res.data);
+    dispatch({
+      type: SET_LISTINGS,
+      payload: res.data,
+    });
+  } catch (err) {
+    console.log(err);
+    dispatch({
+      type: SET_ERROR_LISTING,
+      payload: err.message,
+    });
+  }
+};
+
+export const clearListingErrors = () => {
+  return { type: CLEAR_ERROR_LISTING };
 };

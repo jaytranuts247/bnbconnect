@@ -54,6 +54,19 @@ export const createUserBooking = (booking) => async (dispatch) => {
       config
     );
 
+    // if  user booking date range is overlapping with existing bookings in database
+    // then raise the booking error
+    if (
+      res.data.msg &&
+      res.data.msg === "Your Booking day range is overalapped with others"
+    ) {
+      dispatch({
+        type: SET_USER_BOOKING_ERROR,
+        payload: res.data.msg,
+      });
+      return res.data.msg;
+    }
+
     console.log("newBooking", res.data, res.data.guest_id);
     let user_id =
       res.data.guest_id !== undefined ? res.data.guest_id : booking.guest_id;

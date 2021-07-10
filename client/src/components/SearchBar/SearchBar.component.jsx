@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, forwardRef } from "react";
 import { connect } from "react-redux";
 import moment from "moment";
 
-import { DateRangePicker, DateRange } from "react-date-range";
+import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 
@@ -18,7 +18,7 @@ import {
   FORCETRUE,
 } from "../../utils/utils";
 
-import { useOnClickOutsideDoubleRefs } from "../../hooks/useOnClickOutsideDoubleRef";
+// import { useOnClickOutsideDoubleRefs } from "../../hooks/useOnClickOutsideDoubleRef";
 
 import CancelIcon from "@material-ui/icons/Cancel";
 
@@ -102,6 +102,7 @@ const SearchBar = forwardRef((props, ref) => {
     resetToggle();
     if (onSearch) handleClickOnSearch();
   });
+
   const selectionRange = {
     startDate: startDate === null ? new Date() : moment(startDate).toDate(),
     endDate: endDate === null ? new Date() : moment(endDate).toDate(),
