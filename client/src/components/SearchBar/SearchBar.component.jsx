@@ -102,6 +102,7 @@ const SearchBar = forwardRef((props, ref) => {
     resetToggle();
     if (onSearch) handleClickOnSearch();
   });
+
   const selectionRange = {
     startDate: startDate === null ? new Date() : moment(startDate).toDate(),
     endDate: endDate === null ? new Date() : moment(endDate).toDate(),

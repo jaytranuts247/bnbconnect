@@ -9,6 +9,7 @@ export const StyledAlert = styled(Alert)`
   display: flex;
   align-items: center;
   font-size: 12px !important;
+  margin: 5px 0;
 `;
 
 export const LineSeperator = styled.div`
