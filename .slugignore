@@ -14,5 +14,6 @@ note.js
 /testFile
 /.netlify
 
+client/public/readme
 
 netlify.toml
