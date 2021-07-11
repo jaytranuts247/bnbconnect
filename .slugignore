@@ -15,5 +15,6 @@ note.js
 /.netlify
 
 client/public/readme
+client/readme
 
 netlify.toml
