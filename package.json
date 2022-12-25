@@ -5,6 +5,9 @@
   "repository": "https://github.com/jaytranuts247/airbnb-clone-v2.git",
   "author": "“Jay <tranquang2407@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "start": "node server.js",
     "server": "nodemon server.js",
