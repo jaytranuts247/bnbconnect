@@ -3,7 +3,7 @@
 
 BnbConnect is a single-page, full-stack web application modeled after Airbnb and made to focus helping individual to effectively plan their trip. It use React.js and Redux for front-end and Node.js and MongoDB in the back-end. The website hosted on Heroku.
 
-![](client/public/readme/bnbconnect_demo.gif)
+![](https://imgur.com/88rY6VY)
 
 ## Technologies
 - React/Redux
@@ -279,7 +279,7 @@ router.post("/", authMiddleware, async (req, res) => {
 - User can leave their reviews and ratings for listing they have already made reservation.
 - User can rate their booking within six categories - accuracy, communication, cleanliness, location, check-in, and value.
 - Listing show the average review rating and update number of reviews every new rating is submitted.
-![](client/public/readme/bnbconect_reviews_fast.gif)
+![](https://imgur.com/a/eLAxP7t)
 #### User Profile 
 - User can access their profile under "Profile" section in dropdown menu.
 - Users can create and edit their profile introduction.
