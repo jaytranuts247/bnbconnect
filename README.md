@@ -3,7 +3,8 @@
 
 BnbConnect is a single-page, full-stack web application modeled after Airbnb and made to focus helping individual to effectively plan their trip. It use React.js and Redux for front-end and Node.js and MongoDB in the back-end. The website hosted on Heroku.
 
-![](https://i.imgur.com/Mm7rX3Z.gif)
+<!--bnbconnect_demo-->
+![](https://i.imgur.com/fs2Ubyk.gif)
 
 ## Technologies
 
@@ -25,6 +26,7 @@ BnbConnect is a single-page, full-stack web application modeled after Airbnb and
 - Invalid login or signup will trigger errors on both front and back end.
 - logged in users can access features such as making reservations, write reviews on listings.
 
+<!--bnbconnect_demo-->
 ![](https://i.imgur.com/fs2Ubyk.gif)
 
 ```javascript
@@ -107,6 +109,7 @@ export const filterListingInBound = (bounds, coords) => {
 - Search bar is integrated with autocompletion widget from Goggle Maps Places API.
 - Users can search listings with autocompletion from Google Maps API.
 
+<!--bnbconnect_autocompletion-->
 ![](https://i.imgur.com/VZlwmNa.gif)
 
 ```javascript 
@@ -135,6 +138,7 @@ export const filterListingInBound = (bounds, coords) => {
 ```
 - Users can explore more listings by moving, zoom in and out maps, more listings will be updated while maps boundary change.
 
+<!--bnbconnect_boundary_change-->
 ![](https://i.imgur.com/nNhfe91.gif)
 
 ```javascript
@@ -182,6 +186,7 @@ export const listingsOnMapChange = (bounds) => async (dispatch) => {
 - User can make reservation by pressing reserve button to add listing reservation to their trip.
 -  User is unable to make reservation if listing is already reserved.
 
+<!--bnbconnect_booking_demo-->
 ![](https://i.imgur.com/tj4LZ8w.gif)
 
 ```javascript
@@ -254,7 +259,8 @@ export const createUserBooking = (booking) => async (dispatch) => {
 };
 ```
 - User can access their reservation under "Booking" section in the menu dropdown.
-- 
+
+<!--bnbconnect_section-->
 ![](https://i.imgur.com/ZLbDJUm.gif)
 
 ```javascript 
@@ -289,7 +295,10 @@ router.post("/", authMiddleware, async (req, res) => {
 - User can leave their reviews and ratings for listing they have already made reservation.
 - User can rate their booking within six categories - accuracy, communication, cleanliness, location, check-in, and value.
 - Listing show the average review rating and update number of reviews every new rating is submitted.
-![](https://imgur.com/a/eLAxP7t)
+
+<!--bnbconnect_review-->
+![](https://i.imgur.com/OGvVsuG.gif)
+
 #### User Profile 
 - User can access their profile under "Profile" section in dropdown menu.
 - Users can create and edit their profile introduction.
