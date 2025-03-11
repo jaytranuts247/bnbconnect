@@ -3,9 +3,10 @@
 
 BnbConnect is a single-page, full-stack web application modeled after Airbnb and made to focus helping individual to effectively plan their trip. It use React.js and Redux for front-end and Node.js and MongoDB in the back-end. The website hosted on Heroku.
 
-![](https://imgur.com/88rY6VY)
+![](https://i.imgur.com/Mm7rX3Z.gif)
 
 ## Technologies
+
 - React/Redux
 - Nodejs
 - Express.js
@@ -23,7 +24,8 @@ BnbConnect is a single-page, full-stack web application modeled after Airbnb and
 - User can sign up and login with existing account
 - Invalid login or signup will trigger errors on both front and back end.
 - logged in users can access features such as making reservations, write reviews on listings.
-![](client/public/readme/bnbconnect_demo.gif)
+
+![](https://i.imgur.com/fs2Ubyk.gif)
 
 ```javascript
 router.post(
@@ -104,7 +106,9 @@ export const filterListingInBound = (bounds, coords) => {
 ```
 - Search bar is integrated with autocompletion widget from Goggle Maps Places API.
 - Users can search listings with autocompletion from Google Maps API.
-![](client/public/readme/bnbconnect_autocompletion_fast.gif)
+
+![](https://i.imgur.com/VZlwmNa.gif)
+
 ```javascript 
  // * Handle query autocompletion
   useEffect(() => {
@@ -130,7 +134,9 @@ export const filterListingInBound = (bounds, coords) => {
   }, [locationInput]);
 ```
 - Users can explore more listings by moving, zoom in and out maps, more listings will be updated while maps boundary change.
-![](client/public/readme/bnbconnect_boundary_change_fast.gif)
+
+![](https://i.imgur.com/nNhfe91.gif)
+
 ```javascript
   const _onDragEnd = (map) => {
     console.log("_onDragEnd");
@@ -175,7 +181,9 @@ export const listingsOnMapChange = (bounds) => async (dispatch) => {
 #### Bookings
 - User can make reservation by pressing reserve button to add listing reservation to their trip.
 -  User is unable to make reservation if listing is already reserved.
-![](client/public/readme/bnbconnect_booking_demo_fast.gif)
+
+![](https://i.imgur.com/tj4LZ8w.gif)
+
 ```javascript
 
   const handleSubmit = async (e) => {
@@ -246,7 +254,9 @@ export const createUserBooking = (booking) => async (dispatch) => {
 };
 ```
 - User can access their reservation under "Booking" section in the menu dropdown.
-![](client/public/readme/bnbconnect_booking_section_fast.gif)
+- 
+![](https://i.imgur.com/ZLbDJUm.gif)
+
 ```javascript 
 // bookings.js route
 router.post("/", authMiddleware, async (req, res) => {
